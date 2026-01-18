@@ -29,13 +29,15 @@ TARGET_DURATION = 5.0  # seconds
 # Define forensic sound classes
 FORENSIC_CLASSES = [
     "gunshot",
-    "glass_breaking", 
-    "voice",
-    "vehicle",
+    "glass_shatter", 
+    "human_scream",
+    "siren",
+    "car_alarm",
     "explosion",
-    "barking",
-    "scream",
-    "ambient"  # Background/silence for negative class
+    "dog_bark",
+    "power_tools",     # Drills, saws (forced entry)
+    "aggressive_shout", # Aggressive speech/fighting
+    "ambient"          # Background/silence
 ]
 
 def create_directory_structure():
