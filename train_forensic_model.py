@@ -237,6 +237,36 @@ def train_model(args):
             "loss": [float(x) for x in history.history['loss']],
             "val_loss": [float(x) for x in history.history['val_loss']]
         }, f, indent=2)
+
+    # Generate Confusion Matrix
+    print("\n📊 Generating Confusion Matrix...")
+    try:
+        from sklearn.metrics import confusion_matrix
+        
+        y_pred_probs = model.predict(X_test)
+        y_pred = np.argmax(y_pred_probs, axis=1)
+        
+        cm = confusion_matrix(y_test, y_pred)
+        
+        # Save as JSON (safe for headless)
+        cm_path = MODELS_DIR / f"{model_name}_confusion_matrix.json"
+        with open(cm_path, "w") as f:
+            json.dump({
+                "matrix": cm.tolist(),
+                "classes": dataset.classes
+            }, f, indent=2)
+        print(f"  Saved to: {cm_path}")
+        
+        # Print readable table
+        print("\nConfusion Matrix:")
+        print(f"{'Class':<20} | " + " | ".join([f"{c[:3]:<3}" for c in dataset.classes]))
+        print("-" * (20 + 6 * len(dataset.classes)))
+        for i, row in enumerate(cm):
+            row_str = " | ".join([f"{val:<3}" for val in row])
+            print(f"{dataset.classes[i]:<20} | {row_str}")
+            
+    except ImportError:
+        print("⚠️ sklearn not installed, skipping confusion matrix.")
     
     print("\n" + "="*50)
     print("✅ TRAINING COMPLETE!")
