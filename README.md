@@ -42,7 +42,9 @@ Place audio files in the appropriate class folders.
 python preprocess_audio.py
 ```
 This will:
-- **Smart Crop**: Automatically finds the loudest 5-second window in your audio (centering on gunshots/events).
+- **Quality Validation**: Automatically skips silent, clipped, or corrupted files.
+- **Smart Crop**: Finds the loudest 5-second window in your audio (centering on events).
+- **Data Augmentation**: Creates 3 additional versions of each file (pitch shift, noise, time stretch).
 - Resample all audio to 16kHz mono.
 - Generate a data manifest.
 
@@ -50,8 +52,12 @@ This will:
 ```bash
 python train_forensic_model.py --epochs 50 --batch_size 32
 ```
-This trains a custom classifier using **Mean + Max Pooling** for better short-event detection (like gunshots).
-It will output a **Confusion Matrix** at the end to show exactly where errors are happening.
+This trains a custom classifier with:
+- **Mean + Max Pooling**: Better detection of short impulsive sounds (gunshots).
+- **Automatic Class Balancing**: Rare classes get higher weight to prevent bias.
+- **Training Graphs**: Accuracy/loss plots saved as PNG files.
+- **Confusion Matrix**: Shows exactly where errors are happening.
+- **Per-Class Report**: Precision, Recall, and F1-Score for each category.
 
 ### Step 4: Export to TFLite
 ```bash
@@ -67,6 +73,33 @@ You can test your trained model on any audio file (e.g., a recording from your p
 python test_model.py "path/to/my_recording.wav"
 ```
 It will analyze the audio and print the confidence percentages for every category.
+
+## 🔄 Advanced: K-Fold Cross-Validation
+
+For a more reliable accuracy estimate, use K-Fold cross-validation:
+
+```bash
+python train_kfold.py --folds 5
+```
+This trains the model 5 times, each time using a different 20% as the test set, and reports the **average accuracy ± standard deviation**.
+
+## 🔐 Model Versioning
+
+Track and compare different model versions:
+
+```bash
+# List all registered models
+python model_registry.py list
+
+# Register a new model
+python model_registry.py register my_model 0.85 --notes "First attempt"
+
+# Compare two versions
+python model_registry.py compare v1 v2
+
+# Auto-register from existing labels files
+python model_registry.py auto
+```
 
 ## Data Collection Tips
 
@@ -99,9 +132,30 @@ It will analyze the audio and print the confidence percentages for every categor
 ## Troubleshooting
 
 ### "Not enough training data"
-Minimum 50 samples per class. Use data augmentation if needed.
+Minimum 50 samples per class. Data augmentation is now **enabled by default**, multiplying your dataset by 4x.
 
 ### "Model not improving"
-- Check audio quality
-- Ensure classes are distinct
-- Try more epochs
+- Check the **per-class report** for weak categories.
+- Check the **training graphs** for overfitting (validation loss going up).
+- Ensure classes are distinct.
+- Try more epochs or adjust learning rate.
+
+### "Files being skipped"
+The quality validator will skip files that are:
+- Too short (< 0.5 seconds)
+- Silent (RMS < 0.01)
+- Clipping (> 10% of samples at peak)
+
+## 📁 Output Files
+
+After training, check the `models/` folder for:
+
+| File | Description |
+|------|-------------|
+| `*_classifier.keras` | Full Keras model (for further training) |
+| `*_labels.json` | Class names and accuracy |
+| `*_history.json` | Raw training metrics |
+| `*_accuracy.png` | Accuracy plot |
+| `*_loss.png` | Loss plot |
+| `*_confusion_matrix.json` | Confusion matrix data |
+| `*_class_report.json` | Per-class precision/recall/F1 |
