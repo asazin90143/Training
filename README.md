@@ -58,8 +58,15 @@ It will output a **Confusion Matrix** at the end to show exactly where errors ar
 python export_to_tflite.py
 ```
 
-### Step 5: Replace the Model
-Copy the generated `forensic_model.tflite` to replace `yamnet.tflite`.
+## 🧪 Validating Your Model
+
+You can test your trained model on any audio file (e.g., a recording from your phone) using the test script:
+
+```bash
+# Run on a specific file
+python test_model.py "path/to/my_recording.wav"
+```
+It will analyze the audio and print the confidence percentages for every category.
 
 ## Data Collection Tips
 
