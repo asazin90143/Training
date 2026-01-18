@@ -164,6 +164,22 @@ def train_model(args):
     num_classes = len(dataset.classes)
     print(f"\n🏷️ Classes: {dataset.classes}")
     
+    # Compute class weights for imbalanced data
+    print("\n⚖️ Computing class weights...")
+    class_counts = np.bincount(y_train, minlength=num_classes)
+    total_samples = len(y_train)
+    class_weights = {}
+    for i in range(num_classes):
+        if class_counts[i] > 0:
+            # Inverse frequency weighting
+            class_weights[i] = total_samples / (num_classes * class_counts[i])
+        else:
+            class_weights[i] = 1.0
+    
+    print("  Class distribution and weights:")
+    for i, cls_name in enumerate(dataset.classes):
+        print(f"    {cls_name}: {class_counts[i]} samples (weight: {class_weights[i]:.2f})")
+    
     # Create model
     print("\n🔨 Building classifier model...")
     model = create_classifier_model(num_classes)
@@ -200,6 +216,7 @@ def train_model(args):
         epochs=args.epochs,
         batch_size=args.batch_size,
         callbacks=callbacks,
+        class_weight=class_weights,
         verbose=1
     )
     
