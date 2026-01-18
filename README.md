@@ -14,14 +14,16 @@ Create the following folder structure inside `scripts/training/`:
 
 ```
 dataset/
-├── gunshot/          # 50+ audio files
-├── glass_breaking/   # 50+ audio files
-├── voice/            # 50+ audio files
-├── vehicle/          # 50+ audio files
-├── explosion/        # 50+ audio files
-├── barking/          # 50+ audio files
-├── scream/           # 50+ audio files
-└── ambient/          # 50+ background noise files
+├── gunshot/          # gunshots, shooting range
+├── glass_shatter/    # window breaking, bottle smash
+├── human_scream/     # distress screams (not playing children)
+├── siren/            # police, ambulance, fire truck
+├── car_alarm/        # distinct repetitive alarm patterns
+├── explosion/        # blasts, fireworks
+├── dog_bark/         # aggressive barking
+├── power_tools/      # drills, saws, angle grinders
+├── aggressive_shout/ # angry shouting, fighting
+└── ambient/          # background noise, wind, rain, traffic
 ```
 
 ### Audio File Requirements
@@ -64,19 +66,26 @@ Copy the generated `forensic_model.tflite` to replace `yamnet.tflite`.
 - Record at shooting ranges (with permission)
 - Include different gun types
 
-### Glass Breaking
+### Glass Shatter
 - Window breaks, bottle smashes
-- Different glass thicknesses
+- Distinct high-frequency "crash" sound
 
-### Voices
-- Conversations, shouts, whispers
-- Male/female voices
-- Different languages
+### Human Scream
+- Focus on distress/fear screams
+- distinctly different from "loud playing" or cheering
 
-### Vehicles
-- Cars, motorcycles, trucks
-- Engine sounds, horns
-- Include passing vehicles
+### Sirens & Alarms
+- **Siren**: Wail, Yelp, Hi-Lo patterns (Police/Fire/Ambulance)
+- **Car Alarm**: Repetitive electronic honking or chirping
+
+### Aggressive Shout
+- Arguments, fighting words
+- High energy speech
+- Distinct from normal conversation
+
+### Power Tools & Explosions
+- **Power Tools**: Angle grinders (high pitch), drills, saws (forced entry sounds)
+- **Explosion**: Booms, blasts, fireworks (low frequency)
 
 ## Troubleshooting
 
