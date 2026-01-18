@@ -298,7 +298,7 @@ def train_model(args):
     # Generate Confusion Matrix
     print("\n📊 Generating Confusion Matrix...")
     try:
-        from sklearn.metrics import confusion_matrix
+        from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
         
         y_pred_probs = model.predict(X_test)
         y_pred = np.argmax(y_pred_probs, axis=1)
@@ -321,6 +321,40 @@ def train_model(args):
         for i, row in enumerate(cm):
             row_str = " | ".join([f"{val:<3}" for val in row])
             print(f"{dataset.classes[i]:<20} | {row_str}")
+        
+        # Per-Class Performance Report
+        print("\n" + "="*60)
+        print("📊 PER-CLASS PERFORMANCE REPORT")
+        print("="*60)
+        
+        precision, recall, f1, support = precision_recall_fscore_support(
+            y_test, y_pred, average=None, labels=range(len(dataset.classes))
+        )
+        
+        print(f"\n{'Class':<20} {'Precision':<12} {'Recall':<12} {'F1-Score':<12} {'Support'}")
+        print("-"*60)
+        
+        class_report = {}
+        for i, cls_name in enumerate(dataset.classes):
+            p = precision[i] if i < len(precision) else 0
+            r = recall[i] if i < len(recall) else 0
+            f = f1[i] if i < len(f1) else 0
+            s = support[i] if i < len(support) else 0
+            
+            print(f"{cls_name:<20} {p*100:>8.1f}%    {r*100:>8.1f}%    {f*100:>8.1f}%    {s:>5}")
+            
+            class_report[cls_name] = {
+                "precision": float(p),
+                "recall": float(r),
+                "f1_score": float(f),
+                "support": int(s)
+            }
+        
+        # Save report
+        report_path = MODELS_DIR / f"{model_name}_class_report.json"
+        with open(report_path, "w") as f:
+            json.dump(class_report, f, indent=2)
+        print(f"\n💾 Report saved to: {report_path}")
             
     except ImportError:
         print("⚠️ sklearn not installed, skipping confusion matrix.")
