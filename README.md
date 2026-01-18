@@ -42,14 +42,16 @@ Place audio files in the appropriate class folders.
 python preprocess_audio.py
 ```
 This will:
-- Resample all audio to 16kHz mono
-- Validate file integrity
-- Generate a data manifest
+- **Smart Crop**: Automatically finds the loudest 5-second window in your audio (centering on gunshots/events).
+- Resample all audio to 16kHz mono.
+- Generate a data manifest.
 
 ### Step 3: Train the Model
 ```bash
 python train_forensic_model.py --epochs 50 --batch_size 32
 ```
+This trains a custom classifier using **Mean + Max Pooling** for better short-event detection (like gunshots).
+It will output a **Confusion Matrix** at the end to show exactly where errors are happening.
 
 ### Step 4: Export to TFLite
 ```bash
