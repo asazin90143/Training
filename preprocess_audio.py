@@ -71,11 +71,46 @@ def load_and_preprocess_audio(file_path: Path) -> np.ndarray:
         target_length = int(TARGET_DURATION * TARGET_SR)
         
         if len(audio) < target_length:
-            # Pad with zeros
-            audio = np.pad(audio, (0, target_length - len(audio)), mode='constant')
+            # Pad with zeros (center the audio)
+            padding = target_length - len(audio)
+            offset = padding // 2
+            audio = np.pad(audio, (offset, padding - offset), mode='constant')
         else:
-            # Trim to target length
-            audio = audio[:target_length]
+            # Smart Crop: Find 5s window with highest energy
+            frame_length = 1024
+            hop_length = 512
+            
+            # Calculate RMS energy
+            rmse = librosa.feature.rms(y=audio, frame_length=frame_length, hop_length=hop_length).flatten()
+            
+            # frames needed for target duration
+            frames_needed = int((target_length / float(len(audio))) * len(rmse))
+            
+            if frames_needed < len(rmse):
+                # Slidng window sum over energy
+                current_sum = np.sum(rmse[:frames_needed])
+                max_sum = current_sum
+                max_start_frame = 0
+                
+                # Efficient sliding window
+                for i in range(1, len(rmse) - frames_needed):
+                    current_sum = current_sum - rmse[i-1] + rmse[i+frames_needed-1]
+                    if current_sum > max_sum:
+                        max_sum = current_sum
+                        max_start_frame = i
+                
+                # Convert frame index back to audio samples
+                start_sample = librosa.frames_to_samples(max_start_frame, hop_length=hop_length)
+                
+                # Ensure we don't go out of bounds
+                end_sample = min(start_sample + target_length, len(audio))
+                start_sample = end_sample - target_length
+                
+                audio = audio[start_sample:end_sample]
+            else:
+                # Fallback to center crop
+                start = (len(audio) - target_length) // 2
+                audio = audio[start:start+target_length]
         
         return audio
         
