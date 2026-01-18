@@ -1,0 +1,19 @@
+# Requirements for Custom Forensic Model Training
+# Install with: pip install -r requirements.txt
+
+# Core ML Libraries
+tensorflow>=2.10.0
+tensorflow-hub>=0.12.0
+
+# Audio Processing
+librosa>=0.10.0
+soundfile>=0.12.0
+scipy>=1.10.0
+
+# Data Processing
+numpy>=1.23.0
+pandas>=1.5.0
+scikit-learn>=1.2.0
+
+# Visualization (optional, for training graphs)
+matplotlib>=3.6.0
