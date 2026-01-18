@@ -255,6 +255,46 @@ def train_model(args):
             "val_loss": [float(x) for x in history.history['val_loss']]
         }, f, indent=2)
 
+    # Generate Training Graphs
+    print("\n📈 Generating training graphs...")
+    try:
+        import matplotlib
+        matplotlib.use('Agg')  # Non-interactive backend for headless
+        import matplotlib.pyplot as plt
+        
+        epochs_range = range(1, len(history.history['accuracy']) + 1)
+        
+        # Accuracy Plot
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(epochs_range, history.history['accuracy'], 'b-', label='Training Accuracy')
+        ax.plot(epochs_range, history.history['val_accuracy'], 'r-', label='Validation Accuracy')
+        ax.set_title('Model Accuracy Over Time')
+        ax.set_xlabel('Epoch')
+        ax.set_ylabel('Accuracy')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+        acc_plot_path = MODELS_DIR / f"{model_name}_accuracy.png"
+        plt.savefig(acc_plot_path, dpi=150, bbox_inches='tight')
+        plt.close(fig)
+        print(f"  Accuracy plot: {acc_plot_path}")
+        
+        # Loss Plot
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(epochs_range, history.history['loss'], 'b-', label='Training Loss')
+        ax.plot(epochs_range, history.history['val_loss'], 'r-', label='Validation Loss')
+        ax.set_title('Model Loss Over Time')
+        ax.set_xlabel('Epoch')
+        ax.set_ylabel('Loss')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+        loss_plot_path = MODELS_DIR / f"{model_name}_loss.png"
+        plt.savefig(loss_plot_path, dpi=150, bbox_inches='tight')
+        plt.close(fig)
+        print(f"  Loss plot: {loss_plot_path}")
+        
+    except ImportError:
+        print("⚠️ matplotlib not installed, skipping graphs.")
+
     # Generate Confusion Matrix
     print("\n📊 Generating Confusion Matrix...")
     try:
