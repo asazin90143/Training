@@ -114,6 +114,50 @@ def create_directory_structure():
     print(f"✅ Created folders in: {DATASET_DIR}")
     print(f"   Classes: {', '.join(FORENSIC_CLASSES)}")
 
+# Audio Quality Thresholds
+MIN_DURATION_SECONDS = 0.5
+MIN_RMS_THRESHOLD = 0.01  # Silence detection
+MAX_CLIPPING_RATIO = 0.1  # Max percentage of samples at peak
+
+def validate_audio_quality(file_path: Path) -> tuple:
+    """
+    Check audio file for quality issues.
+    Returns (is_valid, issues_list).
+    """
+    issues = []
+    
+    try:
+        audio, sr = librosa.load(str(file_path), sr=TARGET_SR, mono=True)
+        duration = len(audio) / sr
+        
+        # Check 1: Duration
+        if duration < MIN_DURATION_SECONDS:
+            issues.append(f"Too short ({duration:.2f}s < {MIN_DURATION_SECONDS}s)")
+        
+        # Check 2: Silence detection
+        rms = np.sqrt(np.mean(audio**2))
+        if rms < MIN_RMS_THRESHOLD:
+            issues.append(f"Too quiet/silent (RMS={rms:.4f})")
+        
+        # Check 3: Clipping detection
+        peak = np.max(np.abs(audio))
+        if peak > 0:
+            clipping_samples = np.sum(np.abs(audio) > 0.99 * peak)
+            clipping_ratio = clipping_samples / len(audio)
+            if clipping_ratio > MAX_CLIPPING_RATIO:
+                issues.append(f"Clipping detected ({clipping_ratio*100:.1f}% at peak)")
+        
+        # Check 4: All zeros
+        if np.all(audio == 0):
+            issues.append("File contains only silence (all zeros)")
+        
+        is_valid = len(issues) == 0
+        return is_valid, issues
+        
+    except Exception as e:
+        return False, [f"Cannot read file: {e}"]
+
+
 def load_and_preprocess_audio(file_path: Path) -> np.ndarray:
     """Load audio file and preprocess to standard format."""
     if not LIBROSA_AVAILABLE:
@@ -209,7 +253,15 @@ def process_dataset():
         print(f"  📂 Processing {cls}: {len(audio_files)} files")
         
         processed_count = 0
+        skipped_count = 0
         for audio_file in audio_files:
+            # Validate audio quality first
+            is_valid, issues = validate_audio_quality(audio_file)
+            if not is_valid:
+                print(f"    ⚠️ Skipping {audio_file.name}: {'; '.join(issues)}")
+                skipped_count += 1
+                continue
+            
             audio = load_and_preprocess_audio(audio_file)
             
             if audio is not None:
@@ -244,7 +296,10 @@ def process_dataset():
                         processed_count += 1
         
         manifest["statistics"][cls] = processed_count
-        print(f"    ✅ Processed: {processed_count} (including augmented)")
+        if skipped_count > 0:
+            print(f"    ✅ Processed: {processed_count} | ⚠️ Skipped: {skipped_count}")
+        else:
+            print(f"    ✅ Processed: {processed_count} (including augmented)")
     
     return manifest
 
