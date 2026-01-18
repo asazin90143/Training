@@ -38,7 +38,7 @@ YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"
 DEFAULT_EPOCHS = 50
 DEFAULT_BATCH_SIZE = 32
 DEFAULT_LEARNING_RATE = 0.001
-EMBEDDING_SIZE = 1024  # YAMNet embedding dimension
+EMBEDDING_SIZE = 2048  # YAMNet embedding dimension (1024) * 2 (Mean + Max)
 
 class ForensicAudioDataset:
     """Dataset handler for forensic audio training."""
@@ -76,10 +76,14 @@ class ForensicAudioDataset:
         # YAMNet returns: scores, embeddings, spectrogram
         _, embeddings, _ = self.yamnet_model(audio)
         
-        # Average embeddings across time
+        # Combine Mean (for sustained sounds) and Max (for impulsive sounds like gunshots)
         mean_embedding = tf.reduce_mean(embeddings, axis=0)
+        max_embedding = tf.reduce_max(embeddings, axis=0)
         
-        return mean_embedding.numpy()
+        # Concatenate both features (size becomes 1024 + 1024 = 2048)
+        final_embedding = tf.concat([mean_embedding, max_embedding], axis=0)
+        
+        return final_embedding.numpy()
     
     def prepare_data(self, test_split: float = 0.2):
         """Prepare training and test datasets."""
