@@ -40,6 +40,66 @@ FORENSIC_CLASSES = [
     "ambient"          # Background/silence
 ]
 
+# Data Augmentation Configuration
+AUGMENTATION_ENABLED = True
+AUGMENTATION_MULTIPLIER = 3  # Each file generates 3 augmented versions
+
+def augment_audio(audio: np.ndarray, sr: int) -> list:
+    """
+    Generate augmented versions of an audio clip.
+    Returns a list of (audio_array, suffix_name) tuples.
+    """
+    augmented = []
+    
+    # 1. Pitch Shift (slightly higher)
+    try:
+        pitched_up = librosa.effects.pitch_shift(audio, sr=sr, n_steps=2)
+        augmented.append((pitched_up, "pitch_up"))
+    except Exception:
+        pass
+    
+    # 2. Pitch Shift (slightly lower)
+    try:
+        pitched_down = librosa.effects.pitch_shift(audio, sr=sr, n_steps=-2)
+        augmented.append((pitched_down, "pitch_down"))
+    except Exception:
+        pass
+    
+    # 3. Add background noise
+    try:
+        noise = np.random.normal(0, 0.005, len(audio))
+        noisy = audio + noise
+        noisy = noisy / np.max(np.abs(noisy))  # Re-normalize
+        augmented.append((noisy, "noisy"))
+    except Exception:
+        pass
+    
+    # 4. Time stretch (slightly faster)
+    try:
+        stretched = librosa.effects.time_stretch(audio, rate=1.1)
+        # Ensure same length
+        if len(stretched) > len(audio):
+            stretched = stretched[:len(audio)]
+        else:
+            stretched = np.pad(stretched, (0, len(audio) - len(stretched)))
+        augmented.append((stretched, "fast"))
+    except Exception:
+        pass
+    
+    # 5. Time stretch (slightly slower)
+    try:
+        stretched = librosa.effects.time_stretch(audio, rate=0.9)
+        if len(stretched) > len(audio):
+            stretched = stretched[:len(audio)]
+        else:
+            stretched = np.pad(stretched, (0, len(audio) - len(stretched)))
+        augmented.append((stretched, "slow"))
+    except Exception:
+        pass
+    
+    # Return only the requested number of augmentations
+    return augmented[:AUGMENTATION_MULTIPLIER]
+
 def create_directory_structure():
     """Create the required directory structure."""
     print("📁 Creating directory structure...")
@@ -153,7 +213,7 @@ def process_dataset():
             audio = load_and_preprocess_audio(audio_file)
             
             if audio is not None:
-                # Save processed audio
+                # Save processed audio (original)
                 output_path = processed_cls_dir / f"{audio_file.stem}_processed.wav"
                 sf.write(str(output_path), audio, TARGET_SR)
                 
@@ -161,13 +221,30 @@ def process_dataset():
                     "file": str(output_path.relative_to(SCRIPT_DIR)),
                     "class": cls,
                     "class_id": FORENSIC_CLASSES.index(cls),
-                    "duration": TARGET_DURATION
+                    "duration": TARGET_DURATION,
+                    "augmented": False
                 })
                 
                 processed_count += 1
+                
+                # Generate augmented versions
+                if AUGMENTATION_ENABLED:
+                    augmented_versions = augment_audio(audio, TARGET_SR)
+                    for aug_audio, aug_suffix in augmented_versions:
+                        aug_path = processed_cls_dir / f"{audio_file.stem}_{aug_suffix}.wav"
+                        sf.write(str(aug_path), aug_audio, TARGET_SR)
+                        
+                        manifest["samples"].append({
+                            "file": str(aug_path.relative_to(SCRIPT_DIR)),
+                            "class": cls,
+                            "class_id": FORENSIC_CLASSES.index(cls),
+                            "duration": TARGET_DURATION,
+                            "augmented": True
+                        })
+                        processed_count += 1
         
         manifest["statistics"][cls] = processed_count
-        print(f"    ✅ Processed: {processed_count}/{len(audio_files)}")
+        print(f"    ✅ Processed: {processed_count} (including augmented)")
     
     return manifest
 
