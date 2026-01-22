@@ -91,12 +91,13 @@ python test_model.py "path/to/my_recording.wav"
 ```
 It will analyze the audio and print **all detected events** above 30% confidence.
 
-Example output if you play a gunshot over a siren:
+Example output (Real test case):
 ```text
 🎯 DETECTED EVENTS (> 30%):
-   • GUNSHOT              92.1%
-   • SIREN                85.4%
+   • GUNSHOT              60.4%
+   • EXPLOSION            36.9%
 ```
+*The model successfully detected both the gunshot and the explosion-like characteristics of the sound.*
 
 ## 🔄 Advanced: K-Fold Cross-Validation
 
