@@ -112,6 +112,10 @@ class ForensicAudioDataset:
         X = X[indices]
         y = y[indices]
         
+        # Convert to One-Hot Encoding for Multi-Label Support
+        # Note: Even if inputs are single-label, this format allows the model to predict multiple later.
+        y = tf.keras.utils.to_categorical(y, num_classes=len(self.classes))
+        
         split_idx = int(len(X) * (1 - test_split))
         
         X_train, X_test = X[:split_idx], X[split_idx:]
@@ -131,7 +135,7 @@ def create_classifier_model(num_classes: int):
         tf.keras.layers.Dropout(0.3),
         tf.keras.layers.Dense(256, activation='relu'),
         tf.keras.layers.Dropout(0.3),
-        tf.keras.layers.Dense(num_classes, activation='softmax')
+        tf.keras.layers.Dense(num_classes, activation='sigmoid')  # Sigmoid for multi-label
     ])
     
     return model
@@ -166,7 +170,9 @@ def train_model(args):
     
     # Compute class weights for imbalanced data
     print("\n⚖️ Computing class weights...")
-    class_counts = np.bincount(y_train, minlength=num_classes)
+    # Convert one-hot back to indices for counting
+    y_train_indices = np.argmax(y_train, axis=1)
+    class_counts = np.bincount(y_train_indices, minlength=num_classes)
     total_samples = len(y_train)
     class_weights = {}
     for i in range(num_classes):
@@ -186,8 +192,8 @@ def train_model(args):
     
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=args.learning_rate),
-        loss='sparse_categorical_crossentropy',
-        metrics=['accuracy']
+        loss='binary_crossentropy',  # Binary Crossentropy for multi-label
+        metrics=['binary_accuracy']
     )
     
     model.summary()
@@ -301,9 +307,16 @@ def train_model(args):
         from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
         
         y_pred_probs = model.predict(X_test)
-        y_pred = np.argmax(y_pred_probs, axis=1)
         
-        cm = confusion_matrix(y_test, y_pred)
+        # Multi-label thresholding (default 0.5)
+        # However, for Confusion Matrix stats (which are usually single-label logic),
+        # we typically take argmax to see the "dominant" class prediction vs true dominant.
+        # But since we trained on single-label files, y_test is one-hot of a single class.
+        
+        y_true_indices = np.argmax(y_test, axis=1)
+        y_pred_indices = np.argmax(y_pred_probs, axis=1)
+        
+        cm = confusion_matrix(y_true_indices, y_pred_indices)
         
         # Save as JSON (safe for headless)
         cm_path = MODELS_DIR / f"{model_name}_confusion_matrix.json"
@@ -324,11 +337,12 @@ def train_model(args):
         
         # Per-Class Performance Report
         print("\n" + "="*60)
-        print("📊 PER-CLASS PERFORMANCE REPORT")
+        print("📊 PER-CLASS PERFORMANCE REPORT (Top-1 Approximation)")
         print("="*60)
         
+        # Using Top-1 for standard report alignment
         precision, recall, f1, support = precision_recall_fscore_support(
-            y_test, y_pred, average=None, labels=range(len(dataset.classes))
+            y_true_indices, y_pred_indices, average=None, labels=range(len(dataset.classes))
         )
         
         print(f"\n{'Class':<20} {'Precision':<12} {'Recall':<12} {'F1-Score':<12} {'Support'}")
