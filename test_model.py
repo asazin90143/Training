@@ -13,7 +13,9 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = SCRIPT_DIR / "models"
+MODEL_DIR = SCRIPT_DIR / "models"
 YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"
+DETECTION_THRESHOLD = 0.3  # Minimum confidence to report a detection
 
 def load_latest_model():
     """Find and load the most recently trained model and its labels."""
@@ -87,29 +89,42 @@ def predict_audio(file_path):
     features = extract_features(file_path, yamnet_model)
     
     if features is not None:
+    if features is not None:
         # 4. Predict
-        predictions = model.predict(features, verbose=0)
+        predictions = model.predict(features, verbose=0)[0]
         
-        # Get top result
-        top_idx = np.argmax(predictions[0])
-        confidence = predictions[0][top_idx]
+        # Multi-label detection logic
+        detected_indices = np.where(predictions >= DETECTION_THRESHOLD)[0]
+        
+        # Sort by confidence descending
+        detected_indices = detected_indices[np.argsort(predictions[detected_indices])[::-1]]
         
         print("\n" + "-"*30)
-        if classes:
-            result_name = classes[top_idx]
-            print(f"🎯 RESULT: {result_name.upper()}")
+        
+        if len(detected_indices) > 0:
+            print(f"🎯 DETECTED EVENTS (> {DETECTION_THRESHOLD*100:.0f}%):")
+            for idx in detected_indices:
+                if classes:
+                    name = classes[idx]
+                    print(f"   • {name.upper():<20} {predictions[idx]*100:.1f}%")
+                else:
+                    print(f"   • Class {idx:<20} {predictions[idx]*100:.1f}%")
         else:
-            print(f"🎯 RESULT: Class ID {top_idx}")
-        print(f"📊 Confidence: {confidence*100:.1f}%")
+            print("❌ No significant events detected.")
+            # Fallback: show top 1 even if low confidence
+            top_idx = np.argmax(predictions)
+            if classes:
+                print(f"   (Best guess: {classes[top_idx]} at {predictions[top_idx]*100:.1f}%)")
+        
         print("-"*-30)
         
         # Show all probabilities
         if classes:
             print("\nFull Analysis:")
             # Sort by confidence
-            sorted_indices = np.argsort(predictions[0])[::-1]
+            sorted_indices = np.argsort(predictions)[::-1]
             for idx in sorted_indices:
-                print(f"  {classes[idx]:<20}: {predictions[0][idx]*100:5.1f}%")
+                print(f"  {classes[idx]:<20}: {predictions[idx]*100:5.1f}%")
 
 def main():
     parser = argparse.ArgumentParser(description="Test your forensic model on an audio file")
