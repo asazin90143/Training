@@ -6,7 +6,9 @@ This guide will help you train a custom audio classification model for forensic 
 
 ### 1. Python Environment
 ```bash
-pip install tensorflow tensorflow-hub librosa soundfile numpy pandas scikit-learn matplotlib
+pip install tensorflow tensorflow-hub librosa soundfile numpy pandas scikit-learn matplotlib requests
+# Optional for auto-downloader:
+pip install yt-dlp datasets
 ```
 
 ### 2. Dataset Preparation
@@ -35,6 +37,21 @@ dataset/
 ## Training Steps
 
 ### Step 1: Organize Your Data
+
+**Option A: Automatic Download**
+Use the `download_dataset.py` script to grab data from multiple sources.
+```bash
+# Freesound (Best Quality) - Requires API Key
+python download_dataset.py --freesound-key YOUR_API_KEY
+
+# Using HuggingFace (Easy)
+python download_dataset.py --use-hf
+
+# Using YouTube (Variety)
+python download_dataset.py --use-yt
+```
+
+**Option B: Manual Collection**
 Place audio files in the appropriate class folders.
 
 ### Step 2: Run Data Preprocessing
