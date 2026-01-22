@@ -201,7 +201,7 @@ def train_model(args):
     # Callbacks
     callbacks = [
         tf.keras.callbacks.EarlyStopping(
-            monitor='val_accuracy',
+            monitor='val_binary_accuracy',
             patience=10,
             restore_best_weights=True
         ),
@@ -254,12 +254,12 @@ def train_model(args):
     # Save training history
     history_path = MODELS_DIR / f"{model_name}_history.json"
     with open(history_path, "w") as f:
-        json.dump({
-            "accuracy": [float(x) for x in history.history['accuracy']],
-            "val_accuracy": [float(x) for x in history.history['val_accuracy']],
-            "loss": [float(x) for x in history.history['loss']],
-            "val_loss": [float(x) for x in history.history['val_loss']]
-        }, f, indent=2)
+        # Convert history to standard list
+        hist_dict = {}
+        for k, v in history.history.items():
+            hist_dict[k] = [float(x) for x in v]
+            
+        json.dump(hist_dict, f, indent=2)
 
     # Generate Training Graphs
     print("\n📈 Generating training graphs...")
@@ -268,13 +268,17 @@ def train_model(args):
         matplotlib.use('Agg')  # Non-interactive backend for headless
         import matplotlib.pyplot as plt
         
-        epochs_range = range(1, len(history.history['accuracy']) + 1)
+        # Determine valid accuracy key
+        acc_key = 'binary_accuracy' if 'binary_accuracy' in history.history else 'accuracy'
+        val_acc_key = f'val_{acc_key}'
+        
+        epochs_range = range(1, len(history.history[acc_key]) + 1)
         
         # Accuracy Plot
         fig, ax = plt.subplots(figsize=(10, 6))
-        ax.plot(epochs_range, history.history['accuracy'], 'b-', label='Training Accuracy')
-        ax.plot(epochs_range, history.history['val_accuracy'], 'r-', label='Validation Accuracy')
-        ax.set_title('Model Accuracy Over Time')
+        ax.plot(epochs_range, history.history[acc_key], 'b-', label='Training Accuracy')
+        ax.plot(epochs_range, history.history[val_acc_key], 'r-', label='Validation Accuracy')
+        ax.set_title(f'Model Accuracy ({acc_key}) Over Time')
         ax.set_xlabel('Epoch')
         ax.set_ylabel('Accuracy')
         ax.legend()

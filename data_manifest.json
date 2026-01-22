@@ -1,0 +1,2800 @@
+{
+  "classes": [
+    "gunshot",
+    "glass_shatter",
+    "human_scream",
+    "siren",
+    "car_alarm",
+    "explosion",
+    "dog_bark",
+    "power_tools",
+    "aggressive_shout",
+    "ambient"
+  ],
+  "samples": [
+    {
+      "file": "processed\\gunshot\\fs_182806_IR02gunshotinachapelMIXED_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_182806_IR02gunshotinachapelMIXED_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_182806_IR02gunshotinachapelMIXED_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_182806_IR02gunshotinachapelMIXED_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_212682_FireworkExplosion2_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_212682_FireworkExplosion2_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_212682_FireworkExplosion2_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_212682_FireworkExplosion2_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_440666_TankBlaster_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_440666_TankBlaster_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_440666_TankBlaster_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_440666_TankBlaster_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_520044_GrenadeFire02wav_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_520044_GrenadeFire02wav_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_520044_GrenadeFire02wav_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_520044_GrenadeFire02wav_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_520046_GrenadeCycleReload03wav_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_520046_GrenadeCycleReload03wav_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_520046_GrenadeCycleReload03wav_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_520046_GrenadeCycleReload03wav_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_699452_ShotgunSennheiserMKH50wav_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_699452_ShotgunSennheiserMKH50wav_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_699452_ShotgunSennheiserMKH50wav_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_699452_ShotgunSennheiserMKH50wav_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_699790_P38Shot7ogg_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_699790_P38Shot7ogg_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_699790_P38Shot7ogg_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_699790_P38Shot7ogg_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_710312_SEMIRAWP38AC42Shot8_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_710312_SEMIRAWP38AC42Shot8_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_710312_SEMIRAWP38AC42Shot8_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_710312_SEMIRAWP38AC42Shot8_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_773865_gunshot3_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_773865_gunshot3_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_773865_gunshot3_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_773865_gunshot3_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_774236_fireworks_processed.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\gunshot\\fs_774236_fireworks_pitch_up.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_774236_fireworks_pitch_down.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\gunshot\\fs_774236_fireworks_noisy.wav",
+      "class": "gunshot",
+      "class_id": 0,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_173557_004wav_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_173557_004wav_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_173557_004wav_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_173557_004wav_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_179259_Droppingglassshard3_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_179259_Droppingglassshard3_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_179259_Droppingglassshard3_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_179259_Droppingglassshard3_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_352331_breakaglassvase_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_352331_breakaglassvase_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_352331_breakaglassvase_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_352331_breakaglassvase_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_521345_ZXAudiocraftGlassDebris023wav_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_521345_ZXAudiocraftGlassDebris023wav_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_521345_ZXAudiocraftGlassDebris023wav_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_521345_ZXAudiocraftGlassDebris023wav_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_554564_GlassShatter2wav_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_554564_GlassShatter2wav_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_554564_GlassShatter2wav_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_554564_GlassShatter2wav_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566446_break03wav_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566446_break03wav_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566446_break03wav_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566446_break03wav_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566448_break01wav_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566448_break01wav_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566448_break01wav_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566448_break01wav_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566453_break04wav_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566453_break04wav_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566453_break04wav_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_566453_break04wav_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_736533_SmashingBreakingPorcelainClayCeramicPieces5_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_736533_SmashingBreakingPorcelainClayCeramicPieces5_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_736533_SmashingBreakingPorcelainClayCeramicPieces5_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_736533_SmashingBreakingPorcelainClayCeramicPieces5_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_757363_Smallflourescentlightshattering_processed.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_757363_Smallflourescentlightshattering_pitch_up.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_757363_Smallflourescentlightshattering_pitch_down.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\glass_shatter\\fs_757363_Smallflourescentlightshattering_noisy.wav",
+      "class": "glass_shatter",
+      "class_id": 1,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_179317_MaleScream13_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_179317_MaleScream13_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_179317_MaleScream13_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_179317_MaleScream13_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_179326_MalescreamsHey_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_179326_MalescreamsHey_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_179326_MalescreamsHey_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_179326_MalescreamsHey_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180297_Malelaughingoutloud1_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_180297_Malelaughingoutloud1_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180297_Malelaughingoutloud1_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180297_Malelaughingoutloud1_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180305_Sadcry1_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_180305_Sadcry1_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180305_Sadcry1_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180305_Sadcry1_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180307_Sadcry2_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_180307_Sadcry2_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180307_Sadcry2_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_180307_Sadcry2_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482339_AnnoyingJungleCreature_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_482339_AnnoyingJungleCreature_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482339_AnnoyingJungleCreature_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482339_AnnoyingJungleCreature_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482340_AngryGoblin12_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_482340_AngryGoblin12_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482340_AngryGoblin12_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482340_AngryGoblin12_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482341_AngryGoblin11_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_482341_AngryGoblin11_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482341_AngryGoblin11_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_482341_AngryGoblin11_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_615020_WIT5despair_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_615020_WIT5despair_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_615020_WIT5despair_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_615020_WIT5despair_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_621352_MaleYellingoutaWarCry3WITHreverbwav_processed.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\human_scream\\fs_621352_MaleYellingoutaWarCry3WITHreverbwav_pitch_up.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_621352_MaleYellingoutaWarCry3WITHreverbwav_pitch_down.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\human_scream\\fs_621352_MaleYellingoutaWarCry3WITHreverbwav_noisy.wav",
+      "class": "human_scream",
+      "class_id": 2,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_156868_PoliceSirenYelpmp3_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_156868_PoliceSirenYelpmp3_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_156868_PoliceSirenYelpmp3_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_156868_PoliceSirenYelpmp3_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_268221_policesirenonelooploopable_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_268221_policesirenonelooploopable_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_268221_policesirenonelooploopable_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_268221_policesirenonelooploopable_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_322205_PoliceCarBudapestWAV_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_322205_PoliceCarBudapestWAV_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_322205_PoliceCarBudapestWAV_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_322205_PoliceCarBudapestWAV_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_479917_YamahaKickhard_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_479917_YamahaKickhard_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_479917_YamahaKickhard_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_479917_YamahaKickhard_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_536773_Sirenogg_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_536773_Sirenogg_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_536773_Sirenogg_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_536773_Sirenogg_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_612668_BOUVIERRomain20212022plasmaflicwav_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_612668_BOUVIERRomain20212022plasmaflicwav_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_612668_BOUVIERRomain20212022plasmaflicwav_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_612668_BOUVIERRomain20212022plasmaflicwav_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_640759_Alarm_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_640759_Alarm_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_640759_Alarm_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_640759_Alarm_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_757238_PoliceCarDoppler2_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_757238_PoliceCarDoppler2_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_757238_PoliceCarDoppler2_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_757238_PoliceCarDoppler2_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_800708_SS2000wailseamless_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_800708_SS2000wailseamless_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_800708_SS2000wailseamless_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_800708_SS2000wailseamless_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_814948_FXPoliceSirenandStubJH_processed.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\siren\\fs_814948_FXPoliceSirenandStubJH_pitch_up.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_814948_FXPoliceSirenandStubJH_pitch_down.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\siren\\fs_814948_FXPoliceSirenandStubJH_noisy.wav",
+      "class": "siren",
+      "class_id": 3,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_185479_CarHonk_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_185479_CarHonk_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_185479_CarHonk_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_185479_CarHonk_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_428484_95alarmawav_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_428484_95alarmawav_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_428484_95alarmawav_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_428484_95alarmawav_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_439257_CarAlarmSound01aif_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_439257_CarAlarmSound01aif_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_439257_CarAlarmSound01aif_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_439257_CarAlarmSound01aif_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_483639_AhoogavintagecarhornremixofcraigsmithsFreesound480002wav_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_483639_AhoogavintagecarhornremixofcraigsmithsFreesound480002wav_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_483639_AhoogavintagecarhornremixofcraigsmithsFreesound480002wav_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_483639_AhoogavintagecarhornremixofcraigsmithsFreesound480002wav_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_503507_CRUMIERERobin20192020CarReversingToParkwav_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_503507_CRUMIERERobin20192020CarReversingToParkwav_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_503507_CRUMIERERobin20192020CarReversingToParkwav_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_503507_CRUMIERERobin20192020CarReversingToParkwav_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_536773_Sirenogg_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_536773_Sirenogg_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_536773_Sirenogg_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_536773_Sirenogg_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_686265_DoorchimebellsingleoldFordGMandothersmp3_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_686265_DoorchimebellsingleoldFordGMandothersmp3_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_686265_DoorchimebellsingleoldFordGMandothersmp3_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_686265_DoorchimebellsingleoldFordGMandothersmp3_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_733505_CarDoorAlarm_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_733505_CarDoorAlarm_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_733505_CarDoorAlarm_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_733505_CarDoorAlarm_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_753358_Carservicealert_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_753358_Carservicealert_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_753358_Carservicealert_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_753358_Carservicealert_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_784980_MinorCautionAlarmFromCar_processed.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\car_alarm\\fs_784980_MinorCautionAlarmFromCar_pitch_up.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_784980_MinorCautionAlarmFromCar_pitch_down.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\car_alarm\\fs_784980_MinorCautionAlarmFromCar_noisy.wav",
+      "class": "car_alarm",
+      "class_id": 4,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_175270_GunZapwav_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_175270_GunZapwav_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_175270_GunZapwav_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_175270_GunZapwav_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_182806_IR02gunshotinachapelMIXED_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_182806_IR02gunshotinachapelMIXED_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_182806_IR02gunshotinachapelMIXED_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_182806_IR02gunshotinachapelMIXED_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_215605_launch04mp3_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_215605_launch04mp3_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_215605_launch04mp3_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_215605_launch04mp3_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_322512_Explosion15b_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_322512_Explosion15b_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_322512_Explosion15b_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_322512_Explosion15b_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_365095_FluorescentBulbDropEmptyRoom03wav_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_365095_FluorescentBulbDropEmptyRoom03wav_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_365095_FluorescentBulbDropEmptyRoom03wav_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_365095_FluorescentBulbDropEmptyRoom03wav_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_434426_explosion01wav_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_434426_explosion01wav_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_434426_explosion01wav_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_434426_explosion01wav_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_581600_AutoCannon1_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_581600_AutoCannon1_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_581600_AutoCannon1_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_581600_AutoCannon1_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_725203_BassHit_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_725203_BassHit_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_725203_BassHit_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_725203_BassHit_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_746474_RiserHitsfx069_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_746474_RiserHitsfx069_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_746474_RiserHitsfx069_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_746474_RiserHitsfx069_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_814053_Shockwave_processed.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\explosion\\fs_814053_Shockwave_pitch_up.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_814053_Shockwave_pitch_down.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\explosion\\fs_814053_Shockwave_noisy.wav",
+      "class": "explosion",
+      "class_id": 5,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_125574_TenorBarkwav_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_125574_TenorBarkwav_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_125574_TenorBarkwav_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_125574_TenorBarkwav_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_142641_barkGrowlwav_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_142641_barkGrowlwav_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_142641_barkGrowlwav_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_142641_barkGrowlwav_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_396307_DogplayWAV_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_396307_DogplayWAV_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_396307_DogplayWAV_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_396307_DogplayWAV_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_515688_AdrianaLopezExcitedDog_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_515688_AdrianaLopezExcitedDog_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_515688_AdrianaLopezExcitedDog_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_515688_AdrianaLopezExcitedDog_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_553188_BarkingDog_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_553188_BarkingDog_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_553188_BarkingDog_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_553188_BarkingDog_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_554579_lappingwavessalishseaeditedfadeoutwav_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_554579_lappingwavessalishseaeditedfadeoutwav_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_554579_lappingwavessalishseaeditedfadeoutwav_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_554579_lappingwavessalishseaeditedfadeoutwav_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_613261_dogwoofwav_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_613261_dogwoofwav_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_613261_dogwoofwav_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_613261_dogwoofwav_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_635113_dogbarkingwav_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_635113_dogbarkingwav_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_635113_dogbarkingwav_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_635113_dogbarkingwav_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_735687_DogsGermanShepherdBarkingClosePerspective_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_735687_DogsGermanShepherdBarkingClosePerspective_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_735687_DogsGermanShepherdBarkingClosePerspective_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_735687_DogsGermanShepherdBarkingClosePerspective_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_737885_DogBark1_processed.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\dog_bark\\fs_737885_DogBark1_pitch_up.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_737885_DogBark1_pitch_down.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\dog_bark\\fs_737885_DogBark1_noisy.wav",
+      "class": "dog_bark",
+      "class_id": 6,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_211187_DrillToBrain_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_211187_DrillToBrain_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_211187_DrillToBrain_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_211187_DrillToBrain_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_220159_SpaceyDrillQuick_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_220159_SpaceyDrillQuick_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_220159_SpaceyDrillQuick_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_220159_SpaceyDrillQuick_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_220185_SpaceDrill_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_220185_SpaceDrill_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_220185_SpaceDrill_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_220185_SpaceDrill_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_248235_dentistdrillnastyhighwav_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_248235_dentistdrillnastyhighwav_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_248235_dentistdrillnastyhighwav_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_248235_dentistdrillnastyhighwav_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_254301_AlienDrillSpaceSound_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_254301_AlienDrillSpaceSound_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_254301_AlienDrillSpaceSound_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_254301_AlienDrillSpaceSound_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_258044_Handheldbatterydrill01_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_258044_Handheldbatterydrill01_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_258044_Handheldbatterydrill01_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_258044_Handheldbatterydrill01_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_450855_icedrillpulloutofholegushysplashwithslushandsnownicedetail2wav_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_450855_icedrillpulloutofholegushysplashwithslushandsnownicedetail2wav_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_450855_icedrillpulloutofholegushysplashwithslushandsnownicedetail2wav_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_450855_icedrillpulloutofholegushysplashwithslushandsnownicedetail2wav_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_453393_Jackhammerworkoutside_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_453393_Jackhammerworkoutside_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_453393_Jackhammerworkoutside_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_453393_Jackhammerworkoutside_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_484640_LCCPTL140DrumFull04wav_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_484640_LCCPTL140DrumFull04wav_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_484640_LCCPTL140DrumFull04wav_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_484640_LCCPTL140DrumFull04wav_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_71086_MultipleDrillwav_processed.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\power_tools\\fs_71086_MultipleDrillwav_pitch_up.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_71086_MultipleDrillwav_pitch_down.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\power_tools\\fs_71086_MultipleDrillwav_noisy.wav",
+      "class": "power_tools",
+      "class_id": 7,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_520282_ZisaAttackGrowlHighPitchedAngry7wav_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_520282_ZisaAttackGrowlHighPitchedAngry7wav_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_520282_ZisaAttackGrowlHighPitchedAngry7wav_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_520282_ZisaAttackGrowlHighPitchedAngry7wav_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_521970_MegaphoneRadioGibberish_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_521970_MegaphoneRadioGibberish_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_521970_MegaphoneRadioGibberish_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_521970_MegaphoneRadioGibberish_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_521971_MegaphoneRadioGibberish5_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_521971_MegaphoneRadioGibberish5_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_521971_MegaphoneRadioGibberish5_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_521971_MegaphoneRadioGibberish5_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621281_ItsvictoryorthegraveNOreverbwav_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621281_ItsvictoryorthegraveNOreverbwav_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621281_ItsvictoryorthegraveNOreverbwav_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621281_ItsvictoryorthegraveNOreverbwav_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621282_ItsvictoryorthegraveWITHreverbwav_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621282_ItsvictoryorthegraveWITHreverbwav_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621282_ItsvictoryorthegraveWITHreverbwav_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621282_ItsvictoryorthegraveWITHreverbwav_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621325_RowdyGroupHypeGruntBootStompandShieldSmashNOreverbwav_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621325_RowdyGroupHypeGruntBootStompandShieldSmashNOreverbwav_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621325_RowdyGroupHypeGruntBootStompandShieldSmashNOreverbwav_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621325_RowdyGroupHypeGruntBootStompandShieldSmashNOreverbwav_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621337_MaleYellingoutaWarCry7WITHOUTreverbwav_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621337_MaleYellingoutaWarCry7WITHOUTreverbwav_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621337_MaleYellingoutaWarCry7WITHOUTreverbwav_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621337_MaleYellingoutaWarCry7WITHOUTreverbwav_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621352_MaleYellingoutaWarCry3WITHreverbwav_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621352_MaleYellingoutaWarCry3WITHreverbwav_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621352_MaleYellingoutaWarCry3WITHreverbwav_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_621352_MaleYellingoutaWarCry3WITHreverbwav_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_623440_HAWITHreverbwav_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_623440_HAWITHreverbwav_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_623440_HAWITHreverbwav_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_623440_HAWITHreverbwav_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_634660_Catscreaming13mp3_processed.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_634660_Catscreaming13mp3_pitch_up.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_634660_Catscreaming13mp3_pitch_down.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\aggressive_shout\\fs_634660_Catscreaming13mp3_noisy.wav",
+      "class": "aggressive_shout",
+      "class_id": 8,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_156198_friction1singlewav_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_156198_friction1singlewav_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_156198_friction1singlewav_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_156198_friction1singlewav_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_156205_streetpeoplenoise1wav_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_156205_streetpeoplenoise1wav_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_156205_streetpeoplenoise1wav_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_156205_streetpeoplenoise1wav_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_207562_open24ozsodabottleoutdoorslongfizzexplode_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_207562_open24ozsodabottleoutdoorslongfizzexplode_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_207562_open24ozsodabottleoutdoorslongfizzexplode_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_207562_open24ozsodabottleoutdoorslongfizzexplode_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_251626_NYCRain3AinteriorThunderdistanttrafficAwav_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_251626_NYCRain3AinteriorThunderdistanttrafficAwav_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_251626_NYCRain3AinteriorThunderdistanttrafficAwav_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_251626_NYCRain3AinteriorThunderdistanttrafficAwav_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_388276_LacucarachacarHornwav_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_388276_LacucarachacarHornwav_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_388276_LacucarachacarHornwav_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_388276_LacucarachacarHornwav_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_434070_Streetlightnoise_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_434070_Streetlightnoise_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_434070_Streetlightnoise_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_434070_Streetlightnoise_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_473693_CityAmbienceAtNight1wav_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_473693_CityAmbienceAtNight1wav_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_473693_CityAmbienceAtNight1wav_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_473693_CityAmbienceAtNight1wav_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_536536_Heavymachineryidleloop_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_536536_Heavymachineryidleloop_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_536536_Heavymachineryidleloop_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_536536_Heavymachineryidleloop_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_835932_ChatarreroArgentinasample119bpm_processed.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": false
+    },
+    {
+      "file": "processed\\ambient\\fs_835932_ChatarreroArgentinasample119bpm_pitch_up.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_835932_ChatarreroArgentinasample119bpm_pitch_down.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    },
+    {
+      "file": "processed\\ambient\\fs_835932_ChatarreroArgentinasample119bpm_noisy.wav",
+      "class": "ambient",
+      "class_id": 9,
+      "duration": 5.0,
+      "augmented": true
+    }
+  ],
+  "statistics": {
+    "gunshot": 40,
+    "glass_shatter": 40,
+    "human_scream": 40,
+    "siren": 40,
+    "car_alarm": 40,
+    "explosion": 40,
+    "dog_bark": 40,
+    "power_tools": 40,
+    "aggressive_shout": 40,
+    "ambient": 36
+  }
+}

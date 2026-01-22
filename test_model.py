@@ -89,7 +89,6 @@ def predict_audio(file_path):
     features = extract_features(file_path, yamnet_model)
     
     if features is not None:
-    if features is not None:
         # 4. Predict
         predictions = model.predict(features, verbose=0)[0]
         

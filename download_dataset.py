@@ -1,4 +1,4 @@
-"""
+python train_forensic_model.py"""
 Automatic Dataset Downloader
 Downloads audio samples from Freesound, HuggingFace, and other sources.
 """

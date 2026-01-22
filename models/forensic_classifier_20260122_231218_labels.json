@@ -1,0 +1,16 @@
+{
+  "classes": [
+    "gunshot",
+    "glass_shatter",
+    "human_scream",
+    "siren",
+    "car_alarm",
+    "explosion",
+    "dog_bark",
+    "power_tools",
+    "aggressive_shout",
+    "ambient"
+  ],
+  "accuracy": 0.9612500071525574,
+  "trained_on": "20260122_231218"
+}
