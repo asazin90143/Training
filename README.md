@@ -72,7 +72,14 @@ You can test your trained model on any audio file (e.g., a recording from your p
 # Run on a specific file
 python test_model.py "path/to/my_recording.wav"
 ```
-It will analyze the audio and print the confidence percentages for every category.
+It will analyze the audio and print **all detected events** above 30% confidence.
+
+Example output if you play a gunshot over a siren:
+```text
+🎯 DETECTED EVENTS (> 30%):
+   • GUNSHOT              92.1%
+   • SIREN                85.4%
+```
 
 ## 🔄 Advanced: K-Fold Cross-Validation
 
