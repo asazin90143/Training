@@ -34,6 +34,34 @@ dataset/
 - **Duration**: 1-10 seconds per clip
 - **Quality**: Clear examples of the sound class
 
+## 🔗 File Structure & Connections
+
+Understanding how the scripts work together:
+
+```mermaid
+graph TD
+    A[download_dataset.py] -->|Downloads raw audio| B(dataset folder)
+    B -->|Input| C[preprocess_audio.py]
+    C -->|Cleans, Augments, & Validates| D(processed folder)
+    C -->|Generates| E(data_manifest.json)
+    D -->|Input| F[train_forensic_model.py]
+    E -->|Input| F
+    F -->|Trains & Saves| G(models folder)
+    G -->|Model & Labels| H[test_model.py]
+    G -->|Model| I[export_to_tflite.py]
+    I -->|Exports| J(model.tflite)
+```
+
+| File | Purpose |
+|------|---------|
+| `download_dataset.py` | Fetches audio from Freesound/HF/YouTube to populate `dataset/`. |
+| `preprocess_audio.py` | Filters bad audio, standardizes to 16kHz, creates 3x augmentations, builds manifest. |
+| `train_forensic_model.py` | The main brain. Reads manifest, extracts YAMNet features, trains the classifier. |
+| `train_kfold.py` | Advanced training that runs 5 times to prove the model is robust. |
+| `test_model.py` | Loads the trained model to make predictions on new audio files. |
+| `model_registry.py` | Database to track which model version is the best. |
+| `export_to_tflite.py` | Converts the heavy Python model into a light format for mobile apps. |
+
 ## Training Steps
 
 ### Step 1: Organize Your Data
