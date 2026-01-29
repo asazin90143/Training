@@ -201,7 +201,7 @@ def main():
     parser.add_argument("--freesound-key", help="Freesound.org API Key")
     parser.add_argument("--use-hf", action="store_true", help="Use HuggingFace datasets")
     parser.add_argument("--use-yt", action="store_true", help="Use YouTube Search")
-    parser.add_argument("--count", type=int, default=10, help="Samples per class per source")
+    parser.add_argument("--count", type=int, default=50, help="Samples per class per source")
     
     args = parser.parse_args()
     
