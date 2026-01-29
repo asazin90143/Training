@@ -44,7 +44,7 @@ FORENSIC_CLASSES = [
 AUGMENTATION_ENABLED = True
 AUGMENTATION_MULTIPLIER = 3  # Each file generates 3 augmented versions
 
-def augment_audio(audio: np.ndarray, sr: int) -> list:
+def augment_audio(audio: np.ndarray, sr: int, ambient_noises: list = None) -> list:
     """
     Generate augmented versions of an audio clip.
     Returns a list of (audio_array, suffix_name) tuples.
@@ -97,8 +97,29 @@ def augment_audio(audio: np.ndarray, sr: int) -> list:
     except Exception:
         pass
     
+    # 6. Background Mixing (New!)
+    if ambient_noises and len(ambient_noises) > 0:
+        try:
+            # Pick a random background noise
+            bg_noise = random.choice(ambient_noises)
+            
+            # Ensure proper length (loop if too short, crop if too long)
+            if len(bg_noise) < len(audio):
+                repeats = int(np.ceil(len(audio) / len(bg_noise)))
+                bg_noise = np.tile(bg_noise, repeats)
+            
+            bg_noise = bg_noise[:len(audio)]
+            
+            # Mix: Audio (0.8) + Noise (0.3)
+            mixed = (audio * 0.8) + (bg_noise * 0.3)
+            mixed = mixed / np.max(np.abs(mixed)) # Re-normalize
+            augmented.append((mixed, "mixed_bg"))
+        except Exception:
+            pass
+            
     # Return only the requested number of augmentations
     return augmented[:AUGMENTATION_MULTIPLIER]
+
 
 def create_directory_structure():
     """Create the required directory structure."""
@@ -236,6 +257,21 @@ def process_dataset():
         "statistics": {}
     }
     
+    # Load separate Ambient noises first for mixing
+    print("  🎵 Pre-loading background noises for mixing...")
+    ambient_noises = []
+    ambient_dir = DATASET_DIR / "ambient"
+    if ambient_dir.exists():
+        for f in list(ambient_dir.glob("*.wav")) + list(ambient_dir.glob("*.mp3")):
+            try:
+                # Basic load just for mixing pool
+                audio, _ = librosa.load(str(f), sr=TARGET_SR, mono=True)
+                if len(audio) > TARGET_SR * 1.0: # Ignore tiny files
+                    ambient_noises.append(audio)
+            except:
+                pass
+    print(f"    ✅ Loaded {len(ambient_noises)} background tracks")
+    
     for cls in FORENSIC_CLASSES:
         cls_dir = DATASET_DIR / cls
         processed_cls_dir = PROCESSED_DIR / cls
@@ -281,7 +317,9 @@ def process_dataset():
                 
                 # Generate augmented versions
                 if AUGMENTATION_ENABLED:
-                    augmented_versions = augment_audio(audio, TARGET_SR)
+                    # Pass ambient noises (except for ambient class itself)
+                    bg_tracks = ambient_noises if cls != "ambient" else []
+                    augmented_versions = augment_audio(audio, TARGET_SR, bg_tracks)
                     for aug_audio, aug_suffix in augmented_versions:
                         aug_path = processed_cls_dir / f"{audio_file.stem}_{aug_suffix}.wav"
                         sf.write(str(aug_path), aug_audio, TARGET_SR)
