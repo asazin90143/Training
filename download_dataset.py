@@ -25,8 +25,12 @@ except ImportError:
     HF_AVAILABLE = False
 
 # Configuration
+# Configuration
+from config import get_paths
+PATHS = get_paths()
+
 SCRIPT_DIR = Path(__file__).parent
-DATASET_DIR = SCRIPT_DIR / "dataset"
+DATASET_DIR = PATHS["dataset"]
 
 # Map internal class names to search queries
 SEARCH_QUERIES = {

@@ -55,9 +55,11 @@ python preprocess_audio.py
 Train the AI. This will take a few minutes depending on your computer.
 
 ```bash
-python train_forensic_model.py --epochs 30
+```bash
+```bash
+python train_forensic_model.py --epochs 40
 ```
-*Watch the "Accuracy" go up!*
+*Note: The system has **Early Stopping**, so if it finishes learning at epoch 15, it will stop automatically to save time!*
 
 ### Step 4: Test the Model
 Now test it on a real file!

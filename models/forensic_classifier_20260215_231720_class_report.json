@@ -1,0 +1,62 @@
+{
+  "gunshot": {
+    "precision": 0.6190476190476191,
+    "recall": 1.0,
+    "f1_score": 0.7647058823529411,
+    "support": 13
+  },
+  "glass_shatter": {
+    "precision": 0.5555555555555556,
+    "recall": 1.0,
+    "f1_score": 0.7142857142857143,
+    "support": 5
+  },
+  "human_scream": {
+    "precision": 0.75,
+    "recall": 0.42857142857142855,
+    "f1_score": 0.5454545454545454,
+    "support": 7
+  },
+  "siren": {
+    "precision": 0.875,
+    "recall": 0.875,
+    "f1_score": 0.875,
+    "support": 8
+  },
+  "car_alarm": {
+    "precision": 1.0,
+    "recall": 0.7142857142857143,
+    "f1_score": 0.8333333333333334,
+    "support": 7
+  },
+  "explosion": {
+    "precision": 1.0,
+    "recall": 0.1,
+    "f1_score": 0.18181818181818182,
+    "support": 10
+  },
+  "dog_bark": {
+    "precision": 0.6470588235294118,
+    "recall": 1.0,
+    "f1_score": 0.7857142857142857,
+    "support": 11
+  },
+  "power_tools": {
+    "precision": 1.0,
+    "recall": 0.7142857142857143,
+    "f1_score": 0.8333333333333334,
+    "support": 7
+  },
+  "aggressive_shout": {
+    "precision": 0.25,
+    "recall": 0.25,
+    "f1_score": 0.25,
+    "support": 4
+  },
+  "ambient": {
+    "precision": 0.8333333333333334,
+    "recall": 0.625,
+    "f1_score": 0.7142857142857143,
+    "support": 8
+  }
+}
