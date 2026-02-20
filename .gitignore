@@ -2,10 +2,7 @@
 dataset/
 processed/
 
-# Model checkpoints (large binary files)
-# If you want to track models, comment this out, but use Git LFS!
-models/*.keras
-models/*.h5
+
 
 # Python cache
 __pycache__/
