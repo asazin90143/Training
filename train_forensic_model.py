@@ -97,9 +97,22 @@ class HierarchicalDataset:
         for i, sample in enumerate(self.samples):
             if (i + 1) % 100 == 0:
                 print(f"   Processed {i+1}/{len(self.samples)}")
-            
-            # Manifest stores absolute paths — just use them directly
+            # Manifest stores absolute paths
             path = Path(sample["file"])
+            
+            if not path.exists():
+                # The external drive letter might have changed (e.g., E:\ to F:\)
+                # Let's try to find it dynamically using config PATHS["processed"]
+                try:
+                    parts = path.parts
+                    if "processed" in parts:
+                        idx = parts.index("processed")
+                        rel_parts = parts[idx+1:]
+                        new_path = PATHS["processed"].joinpath(*rel_parts)
+                        if new_path.exists():
+                            path = new_path
+                except Exception:
+                    pass
             
             if not path.exists():
                 skipped += 1
