@@ -10,7 +10,7 @@ SCRIPT_DIR = Path(__file__).parent
 # --- EXTERNAL DRIVE PATH ---
 # Set this to the root folder on your external drive that contains the dataset.
 # The 'processed' folder will also be created here.
-DATASET_ROOT = r"F:\dataset"
+DATASET_ROOT = r"D:\dataset"
 
 # -------------------------------------------------
 
