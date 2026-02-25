@@ -41,6 +41,20 @@ D:\dataset\
 
 ---
 
+## 🔗 Code Architecture (File Purposes)
+
+Here is exactly what each script in this repository does:
+
+| File | Purpose |
+|------|---------|
+| `config.py` | Central configuration. Tells all other scripts where to find the external hard drive and `dataset/` folder. |
+| `download_dataset.py` | (Optional) Automatically grabs sounds from Freesound/HuggingFace if you don't have your own dataset. |
+| `preprocess_audio.py` | Scans the raw audio, filters out bad files, normalizes volumes, and exports 16kHz audio to the `processed/` drive. Builds the `data_manifest.json` map. |
+| `train_forensic_model.py` | The core AI engine. Reads the manifest, extracts YAMNet embeddings, and trains the Multi-Label, Dual-Head neural network. |
+| `test_model.py` | Used after training. Push any raw audio file into it to see what acoustic events (Main + Sub categories) are inside it. |
+
+---
+
 ## 🚀 The Training Pipeline
 
 ### Step 1: Preprocess Audio
