@@ -40,7 +40,7 @@ MANIFEST_PATH = PATHS["manifest"]
 YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"
 
 # Training Config
-DEFAULT_EPOCHS = 40
+DEFAULT_EPOCHS = 100
 DEFAULT_BATCH_SIZE = 32
 DEFAULT_LEARNING_RATE = 0.001
 EMBEDDING_SIZE = 1024
@@ -252,14 +252,14 @@ def train_model(args):
     callbacks = [
         tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
-            patience=8,
+            patience=15,  # Increased from 8 to give it more time to overcome plateaus
             restore_best_weights=True
         ),
         tf.keras.callbacks.ReduceLROnPlateau(
             monitor='val_loss',
-            patience=4,
-            factor=0.5,
-            min_lr=1e-6
+            patience=5,   # Increased from 4
+            factor=0.3,   # Harder drop when stuck (was 0.5)
+            min_lr=1e-7   # Lower minimum (was 1e-6)
         )
     ]
     
