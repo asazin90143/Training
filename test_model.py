@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 import json
 import numpy as np
@@ -7,6 +8,10 @@ import tensorflow_hub as hub
 import librosa
 from pathlib import Path
 from collections import defaultdict
+
+# Force UTF-8 encoding for Windows console
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
 
 # Disable GPU
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -67,7 +72,7 @@ def merge_intervals(intervals):
             merged.append(list(current))
     return merged
 
-def predict(audio_path, window_sec=5.0, hop_sec=1.0):
+def predict(audio_path, window_sec=2.0, hop_sec=0.5, threshold=0.3):
     print("="*50)
     print("🔎 HIERARCHICAL FORENSIC TIMELINE ANALYSIS")
     print("="*50)
@@ -125,8 +130,6 @@ def predict(audio_path, window_sec=5.0, hop_sec=1.0):
     main_preds = preds[0] # (num_windows, num_main_classes)
     sub_preds = preds[1]  # (num_windows, num_sub_classes)
     
-    THRESHOLD = 0.3
-    
     main_classes = labels.get("main_classes", [])
     sub_classes = labels.get("sub_classes", [])
     
@@ -137,16 +140,16 @@ def predict(audio_path, window_sec=5.0, hop_sec=1.0):
     for i, (start_t, end_t) in enumerate(timestamps):
         # Process Main Classes
         for cls_idx, conf in enumerate(main_preds[i]):
-            if conf >= THRESHOLD:
+            if conf >= threshold:
                 main_detections[main_classes[cls_idx]].append((start_t, end_t))
                 
         # Process Sub Classes
         for cls_idx, conf in enumerate(sub_preds[i]):
-            if conf >= THRESHOLD:
+            if conf >= threshold:
                 sub_detections[sub_classes[cls_idx]].append((start_t, end_t))
                 
     # 5. Display Results
-    print("\n📊 TIMELINE RESULTS (>30% Confidence)")
+    print(f"\n📊 TIMELINE RESULTS (>{threshold*100:.0f}% Confidence)")
     print("-" * 50)
     
     # --- Main Class ---
@@ -172,14 +175,15 @@ def predict(audio_path, window_sec=5.0, hop_sec=1.0):
     print("-" * 50)
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("file", nargs="?")
+    parser = argparse.ArgumentParser(description="Test forensic audio model on a file")
+    parser.add_argument("file", nargs="?", help="Path to the audio file (.wav, .mp3)")
+    parser.add_argument("--threshold", type=float, default=0.3, help="Confidence threshold (0.0 to 1.0) to detect an event (default 0.3)")
     args = parser.parse_args()
     
     if args.file:
-        predict(args.file)
+        predict(args.file, threshold=args.threshold)
     else:
-        print("Usage: python test_model.py <file.wav>")
+        print("Usage: python test_model.py <file.wav> [--threshold 0.3]")
 
 if __name__ == "__main__":
     main()
