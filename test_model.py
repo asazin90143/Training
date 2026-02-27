@@ -9,6 +9,13 @@ import librosa
 from pathlib import Path
 from collections import defaultdict
 
+# Anomaly Detection
+try:
+    from sklearn.ensemble import IsolationForest
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    SKLEARN_AVAILABLE = False
+
 # Force UTF-8 encoding for Windows console
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
@@ -153,7 +160,7 @@ def analyze_at_resolution(wav, sr, duration, model, yamnet, window_sec, hop_sec,
     return main_detections, sub_detections
 
 
-def predict(audio_path, threshold=0.3, ensemble=False):
+def predict(audio_path, threshold=0.3, ensemble=False, anomaly=False):
     print("="*50)
     if ensemble:
         print("🗳️ ENSEMBLE MULTI-RESOLUTION FORENSIC ANALYSIS")
@@ -253,18 +260,58 @@ def predict(audio_path, threshold=0.3, ensemble=False):
             print(f"   🎯 {cls_name:<25} ⏱️ {timeline}")
             
     print("-" * 55)
+    
+    # 6. Anomaly Detection (Zero-Shot)
+    if anomaly and SKLEARN_AVAILABLE:
+        print("\n🔬 ANOMALY DETECTION SCAN:")
+        # Collect all features for anomaly scoring
+        all_features = []
+        window_samples = int(2.0 * sr)
+        hop_samples = int(0.5 * sr)
+        for start in range(0, len(wav), hop_samples):
+            end = start + window_samples
+            chunk = wav[start:end]
+            if len(chunk) < sr * 0.5:
+                continue
+            feat = extract_features_from_chunk(chunk, yamnet)
+            if feat is not None:
+                all_features.append(feat.numpy())
+        
+        if all_features:
+            X_feats = np.array(all_features)
+            iso_forest = IsolationForest(contamination=0.1, random_state=42)
+            iso_forest.fit(X_feats)
+            anomaly_scores = iso_forest.predict(X_feats)
+            n_anomalies = int(np.sum(anomaly_scores == -1))
+            
+            if n_anomalies > 0:
+                anomaly_pct = n_anomalies / len(anomaly_scores) * 100
+                print(f"   ⚠️ WARNING: {n_anomalies} ANOMALOUS SEGMENTS DETECTED ({anomaly_pct:.0f}%)")
+                print(f"   These segments contain sounds fundamentally different from training data!")
+                # Find anomaly timestamps
+                anomaly_times = []
+                for i, score in enumerate(anomaly_scores):
+                    if score == -1:
+                        t = i * 0.5  # hop_sec approximation
+                        anomaly_times.append(f"{t:.1f}s")
+                if len(anomaly_times) <= 10:
+                    print(f"   🕐 At: {', '.join(anomaly_times)}")
+            else:
+                print(f"   ✅ No anomalous patterns detected. All sounds match training distribution.")
+        print("-" * 55)
 
 def main():
     parser = argparse.ArgumentParser(description="Test forensic audio model on a file")
     parser.add_argument("file", nargs="?", help="Path to the audio file (.wav, .mp3)")
     parser.add_argument("--threshold", type=float, default=0.3, help="Confidence threshold (0.0 to 1.0) to detect an event (default 0.3)")
     parser.add_argument("--ensemble", action="store_true", help="Use ALL models in models/ for ensemble voting")
+    parser.add_argument("--anomaly", action="store_true", help="Enable Zero-Shot Anomaly Detection (requires scikit-learn)")
     args = parser.parse_args()
     
     if args.file:
-        predict(args.file, threshold=args.threshold, ensemble=args.ensemble)
+        predict(args.file, threshold=args.threshold, ensemble=args.ensemble, anomaly=args.anomaly)
     else:
-        print("Usage: python test_model.py <file.wav> [--threshold 0.3]")
+        print("Usage: python test_model.py <file.wav> [--threshold 0.3] [--ensemble] [--anomaly]")
 
 if __name__ == "__main__":
     main()
