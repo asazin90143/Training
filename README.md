@@ -58,49 +58,63 @@ Here is exactly what each script in this repository does:
 ## 🚀 The Training Pipeline
 
 ### Step 1: Preprocess Audio
-The preprocessor scans your external drive, validates audio quality (skips corrupted/silent files), normalizes, chunks to 5 seconds, and can augment (pitch/time shift). It writes all output to the `processed/` folder on your external drive.
+The preprocessor scans your external drive, validates audio quality, normalizes, chunks to 5 seconds, and applies **Advanced Data Augmentation**. It automatically applies pitch shifting, time stretching, and **Multi-SNR Background Noise Mixing** (faint, medium, loud) to teach the model to ignore overlapping noise. It writes all output to the `processed/` folder.
 
 ```bash
 python preprocess_audio.py
 ```
-*Depending on your dataset size, this can take hours. A `data_manifest.json` will be created to track everything.*
+*Note: You can add an optional `D:\dataset\_background_noise\` folder with custom noise files (wind, rain, static) to be automatically mixed into your training data for extreme real-world robustness.*
 
 ### Step 2: Train the Dual-Head Model
-Train the forensic model using the generated manifest. The model automatically loads YAMNet, extracts 1024-d embeddings, and trains the Multi-Label classification heads. 
+Train the forensic model using the generated manifest. The model automatically extracts embeddings using a pre-trained backbone, applies **MixUp Augmentation** on the fly (blending sounds together to teach multi-label detection), and trains the Dual-Head classification layers.
 
+**Standard Training (100 epochs, YAMNet backbone):**
 ```bash
-python train_forensic_model.py --epochs 40 --batch_size 32
+python train_forensic_model.py
 ```
-*Features automatic Early Stopping (monitors validation loss with patience=8) and Learning Rate Plateau reduction for optimal convergence.*
+
+**Advanced Training Options:**
+```bash
+# Fine-tune the deep layers of YAMNet (slower but highly accurate)
+python train_forensic_model.py --finetune
+
+# Use VGGish instead of YAMNet as the audio feature extractor
+python train_forensic_model.py --backbone vggish
+```
+*Features automatic Early Stopping (patience=15) and Learning Rate Plateau reduction for optimal convergence.*
 
 ### Step 3: Test New Audio
-Test your model against any custom WAV/MP3 file. It will output all detected events above a 30% confidence threshold.
+Test your model against any custom WAV/MP3 file. The tester uses **Multi-Resolution Scanning** (simultaneously checking 0.5s, 2.0s, and 5.0s sliding windows) to catch both short transients (gunshots) and long sustained sounds (sirens) and outputs an exact timeline.
 
 ```bash
-python test_model.py "D:\dataset\vehicle\siren\demo.wav"
+# Analyze a file using a 20% certainty threshold
+python test_model.py "audio.mp3" --threshold 0.20
 ```
 
 **Example Output:**
 ```text
-🔎 HIERARCHICAL FORENSIC ANALYSIS
+🔎 MULTI-RESOLUTION FORENSIC TIMELINE ANALYSIS
 ==================================================
-📊 RESULTS (Multi-Label Detection)
-------------------------------
-📁 MAIN CATEGORIES:
-   • VEHICLE (98.5%)
-   • EFFECT (35.2%)
+📊 TIMELINE RESULTS (>20% Confidence)
+--------------------------------------------------
+📁 MAIN CATEGORIES DETECTED:
+   • VEHICLE         ⏱️ 0.0s - 160.0s
+   • ANIMALS         ⏱️ 2.0s - 9.0s
+   • ENVIRONMENT     ⏱️ 9.0s - 17.0s, 71.0s - 95.0s
 
-🏷️ SPECIFIC EVENTS:
-   🎯 vehicle/siren                95.1%
-   🎯 effect/glass_shatter         42.8%
-------------------------------
+🏷️ SPECIFIC EVENTS DETECTED:
+   🎯 vehicle/siren             ⏱️ 0.0s - 159.0s
+   🎯 animals/dog               ⏱️ 3.0s - 7.0s
+   🎯 environment/traffic       ⏱️ 9.0s - 15.0s, 72.0s - 95.0s
+--------------------------------------------------
 ```
 
 ---
 
 ## 🛠 Model Architecture
 
-- **Base Node**: Google YAMNet (pre-trained on AudioSet)
+- **Base Node**: Google YAMNet or VGGish (swappable via command line).
+- **Advanced Augmentation**: Multi-SNR Environmental Mixing & On-The-Fly MixUp.
 - **Feature Extraction**: Global Average Pooling + Global Max Pooling (catches both sustained noise and transient impulses like gunshots).
 - **Core Network**: Shared Dense layers (1024 -> 512) with Batch Normalization and 40% Dropout.
 - **Main Output Head**: Dense (Sigmoid Activation, Binary Crossentropy)
