@@ -42,8 +42,12 @@ except ImportError:
     print("⚠️ HuggingFace transformers or PyTorch not installed.")
     print("   Run: pip install transformers torch")
 
+import sys
+PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 from config import get_paths
-PATHS = get_paths()
+PATHS = get_paths("wav2vec")
 
 SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = PATHS["models"]

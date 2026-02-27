@@ -32,8 +32,12 @@ try:
 except ImportError:
     LIBROSA_AVAILABLE = False
 
+import sys
+PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 from config import get_paths
-PATHS = get_paths()
+PATHS = get_paths("spectrogram")
 
 SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = PATHS["models"]

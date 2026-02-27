@@ -23,6 +23,11 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import librosa
 
+import sys
+from pathlib import Path
+PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 from config import get_paths
 PATHS = get_paths()
 

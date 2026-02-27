@@ -24,10 +24,17 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import librosa
 
+import sys
+PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+# Also add own directory for sibling imports
+OWN_DIR = str(Path(__file__).parent)
+if OWN_DIR not in sys.path:
+    sys.path.insert(0, OWN_DIR)
 from config import get_paths
-PATHS = get_paths()
+PATHS = get_paths("student")
 
-SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = PATHS["models"]
 MANIFEST_PATH = PATHS["manifest"]
 YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"

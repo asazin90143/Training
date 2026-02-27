@@ -23,8 +23,15 @@ if sys.stdout.encoding != 'utf-8':
 # Disable GPU
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
-SCRIPT_DIR = Path(__file__).parent
-MODELS_DIR = SCRIPT_DIR / "models"
+# Resolve project root (2 levels up from src/testing/)
+from pathlib import Path
+PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+from config import get_paths
+PATHS = get_paths()
+
+MODELS_DIR = PATHS["models_root"]
 YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"
 
 def load_latest_model():
@@ -32,7 +39,7 @@ def load_latest_model():
         print("❌ No models/ directory found.")
         return None, None
         
-    models = list(MODELS_DIR.glob("*.keras"))
+    models = list(MODELS_DIR.rglob("*.keras"))
     if not models:
         print("❌ No .keras models found.")
         return None, None

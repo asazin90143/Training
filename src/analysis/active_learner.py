@@ -26,8 +26,14 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import librosa
 
-SCRIPT_DIR = Path(__file__).parent
-MODELS_DIR = SCRIPT_DIR / "models"
+# Resolve project root
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+from config import get_paths
+PATHS = get_paths()
+
+MODELS_DIR = PATHS["models_root"]
 YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"
 
 

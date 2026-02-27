@@ -15,9 +15,14 @@ except ImportError:
     TF_AVAILABLE = False
     print("❌ TensorFlow not installed")
 
-SCRIPT_DIR = Path(__file__).parent
-MODELS_DIR = SCRIPT_DIR / "models"
-PARENT_SCRIPTS_DIR = SCRIPT_DIR.parent  # The main scripts folder
+import sys
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+from config import get_paths
+PATHS = get_paths()
+
+MODELS_DIR = PATHS["models_root"]
 
 def export_to_tflite(model_path: str, quantize: bool = False):
     """Convert Keras model to TFLite format."""
@@ -113,7 +118,7 @@ def main():
     
     if args.all:
         # Export every model in the models directory
-        models = list(MODELS_DIR.glob("*.keras"))
+        models = list(MODELS_DIR.rglob("*.keras"))
         if not models:
             print("❌ No .keras models found.")
             return

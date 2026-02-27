@@ -30,7 +30,11 @@ try:
 except ImportError:
     LIBROSA_AVAILABLE = False
 
-# Configuration
+# Configuration - resolve project root (2 levels up from src/training/)
+import sys
+PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 from config import get_paths
 PATHS = get_paths()
 

@@ -33,8 +33,14 @@ except ImportError:
     KT_AVAILABLE = False
     print("⚠️ keras-tuner not installed. Run: pip install keras-tuner")
 
+PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+OWN_DIR = str(Path(__file__).parent)
+if OWN_DIR not in sys.path:
+    sys.path.insert(0, OWN_DIR)
 from config import get_paths
-PATHS = get_paths()
+PATHS = get_paths("tuned")
 
 SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = PATHS["models"]
