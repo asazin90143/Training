@@ -38,21 +38,29 @@ SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = PATHS["models"]
 MANIFEST_PATH = PATHS["manifest"]
 
-# YAMNet
+# Feature Extractor Backbones
 YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"
+VGGISH_MODEL_URL = "https://tfhub.dev/google/vggish/1"
+
+BACKBONE_CONFIG = {
+    "yamnet": {"url": YAMNET_MODEL_URL, "embedding_size": 1024, "returns_tuple": True},
+    "vggish": {"url": VGGISH_MODEL_URL, "embedding_size": 128, "returns_tuple": False},
+}
 
 # Training Config
 DEFAULT_EPOCHS = 100
 DEFAULT_BATCH_SIZE = 32
 DEFAULT_LEARNING_RATE = 0.001
-FINETUNE_LEARNING_RATE = 1e-5  # Much lower LR when fine-tuning YAMNet
-EMBEDDING_SIZE = 1024
+FINETUNE_LEARNING_RATE = 1e-5
+EMBEDDING_SIZE = 1024  # Default (YAMNet)
 
 
 class HierarchicalDataset:
-    def __init__(self, manifest_path: Path, yamnet_model):
+    def __init__(self, manifest_path: Path, yamnet_model, backbone="yamnet"):
         self.manifest_path = manifest_path
         self.yamnet_model = yamnet_model
+        self.backbone = backbone
+        self.backbone_cfg = BACKBONE_CONFIG[backbone]
         
         self.main_classes = []
         self.sub_classes = []
@@ -77,10 +85,18 @@ class HierarchicalDataset:
         print(f"   - {len(self.sub_classes)} sub classes")
 
     def extract_embeddings(self, audio_path):
-        """Extract YAMNet embeddings from a processed audio file."""
+        """Extract embeddings from a processed audio file using selected backbone."""
         try:
             wav_data, sr = librosa.load(audio_path, sr=16000, mono=True)
-            _, embeddings, _ = self.yamnet_model(wav_data)
+            
+            if self.backbone_cfg["returns_tuple"]:
+                # YAMNet returns (scores, embeddings, spectrogram)
+                _, embeddings, _ = self.yamnet_model(wav_data)
+            else:
+                # VGGish returns embeddings directly
+                embeddings = self.yamnet_model(wav_data)
+                if len(embeddings.shape) == 1:
+                    embeddings = tf.expand_dims(embeddings, axis=0)
             
             mean_emb = tf.reduce_mean(embeddings, axis=0)
             max_emb = tf.reduce_max(embeddings, axis=0)
@@ -231,9 +247,9 @@ class HierarchicalDataset:
         return X_out[idx], y_main_out[idx], y_sub_out[idx]
 
 
-def create_hierarchical_model(num_main, num_sub):
+def create_hierarchical_model(num_main, num_sub, embedding_size=1024):
     """Build dual-head classification model (embedding-based)."""
-    input_layer = tf.keras.layers.Input(shape=(EMBEDDING_SIZE * 2,))
+    input_layer = tf.keras.layers.Input(shape=(embedding_size * 2,))
     
     # Shared Layers
     x = tf.keras.layers.Dense(1024, activation='relu')(input_layer)
@@ -317,16 +333,19 @@ def train_model(args):
     print("🧠 HIERARCHICAL MODEL TRAINING")
     print("="*50)
     
-    # 1. Load YAMNet
-    print("\n📦 Loading YAMNet...")
-    yamnet = hub.load(YAMNET_MODEL_URL)
-    print("✅ YAMNet loaded")
+    # 1. Load Feature Extractor
+    backbone = args.backbone
+    bb_cfg = BACKBONE_CONFIG[backbone]
+    print(f"\n📦 Loading {backbone.upper()} backbone...")
+    feature_model = hub.load(bb_cfg["url"])
+    print(f"✅ {backbone.upper()} loaded (embedding size: {bb_cfg['embedding_size']})")
     
     # 2. Load Data
-    dataset = HierarchicalDataset(MANIFEST_PATH, yamnet)
+    dataset = HierarchicalDataset(MANIFEST_PATH, feature_model, backbone=backbone)
     (X_train, y_train), (X_test, y_test) = dataset.prepare_data()
     
     # 3. Build Model
+    emb_size = bb_cfg["embedding_size"]
     if args.finetune:
         print("\n🔨 Building FINE-TUNE model (YAMNet trainable)...")
         model = create_finetune_model(
@@ -337,7 +356,8 @@ def train_model(args):
         print("\n🔨 Building dual-head model...")
         model = create_hierarchical_model(
             len(dataset.main_classes),
-            len(dataset.sub_classes)
+            len(dataset.sub_classes),
+            embedding_size=emb_size
         )
     
     # 4. Compile
@@ -420,6 +440,8 @@ def main():
     parser.add_argument("--learning_rate", type=float, default=DEFAULT_LEARNING_RATE)
     parser.add_argument("--finetune", action="store_true",
                         help="Fine-tune YAMNet base model (slower but more accurate)")
+    parser.add_argument("--backbone", type=str, default="yamnet", choices=["yamnet", "vggish"],
+                        help="Feature extractor backbone (default: yamnet)")
     args = parser.parse_args()
     
     train_model(args)
