@@ -8,6 +8,9 @@ An advanced, hierarchical Multi-Label audio classifier powered by **YAMNet Trans
 2. **Multi-Label Ready**: Can correctly identify overlapping sounds (e.g., a siren *and* a gunshot occurring at the same time).
 3. **External Drive Optimization**: Built to read raw data and write processed embeddings exclusively to an external drive (configured via `config.py`), preventing your C: drive from filling up.
 4. **Transfer Learning**: Built on Google's YAMNet, meaning it requires drastically fewer epochs to achieve high accuracy compared to training from scratch.
+5. **Multi-Resolution Scanning**: Simultaneously analyzes audio at 0.5s, 2.0s, and 5.0s windows to catch both short transients and sustained sounds.
+6. **Ensemble Voting**: Supports loading ALL trained models and averaging their predictions for supreme accuracy.
+7. **Anomaly Detection**: Zero-Shot detection of unknown sounds fundamentally different from the training set.
 
 ---
 
@@ -16,6 +19,13 @@ An advanced, hierarchical Multi-Label audio classifier powered by **YAMNet Trans
 Install the required Python packages:
 ```bash
 pip install tensorflow tensorflow-hub librosa soundfile numpy pandas scikit-learn matplotlib
+```
+
+**Optional (for advanced features):**
+```bash
+pip install keras-tuner        # Automated hyperparameter tuning
+pip install transformers torch # Wav2Vec 2.0 backbone
+pip install demucs             # Audio source separation
 ```
 
 ---
@@ -35,89 +45,123 @@ D:\dataset\
 ├── main_category_2/       (e.g., effect)
 │   ├── sub_category_C/    (e.g., glass_shatter)
 │   │   └── ...
+├── _background_noise/     (optional, custom noise files)
+│   ├── wind.wav
+│   └── rain.wav
 ```
-
-*Note: Ensure your `config.py` points to this root directory via the `DATASET_ROOT` variable.*
 
 ---
 
 ## 🔗 Code Architecture (File Purposes)
 
-Here is exactly what each script in this repository does:
+### Core Pipeline
 
 | File | Purpose |
 |------|---------|
 | `config.py` | Central configuration. Tells all other scripts where to find the external hard drive and `dataset/` folder. |
-| `download_dataset.py` | (Optional) Automatically grabs sounds from Freesound/HuggingFace if you don't have your own dataset. |
-| `preprocess_audio.py` | Scans the raw audio, filters out bad files, normalizes volumes, and exports 16kHz audio to the `processed/` drive. Builds the `data_manifest.json` map. |
-| `train_forensic_model.py` | The core AI engine. Reads the manifest, extracts YAMNet embeddings, and trains the Multi-Label, Dual-Head neural network. |
-| `test_model.py` | Used after training. Push any raw audio file into it to see what acoustic events (Main + Sub categories) are inside it. |
+| `preprocess_audio.py` | Scans raw audio, normalizes volumes, applies **SpecAugment frequency masking** and **Multi-SNR Background Noise Mixing**. |
+| `train_forensic_model.py` | Core AI engine. Extracts embeddings, applies **MixUp Augmentation**, trains the Dual-Head neural network. Supports `--backbone`, `--finetune`, `--all_models`. |
+| `test_model.py` | Analyzes audio using **Multi-Resolution Scanning** with optional `--ensemble` and `--anomaly` flags. |
+
+### Advanced Training Scripts
+
+| File | Purpose |
+|------|---------|
+| `train_spectrogram_model.py` | **Vision Transformer**: Converts audio to Mel-Spectrograms and trains ResNet50/EfficientNet to "look" at sounds. |
+| `train_wav2vec_model.py` | **Wav2Vec 2.0**: Uses Meta's self-supervised model for deeper acoustic understanding. |
+| `train_student_model.py` | **Knowledge Distillation**: Trains a tiny model to mimic the combined predictions of a teacher ensemble. |
+| `tune_hyperparameters.py` | **KerasTuner**: Automatically searches for the optimal model architecture and learning rate. |
+
+### Analysis & Utility Scripts
+
+| File | Purpose |
+|------|---------|
+| `active_learner.py` | **Active Learning**: Scans unlabeled audio, identifies uncertain predictions, moves them to review folder. |
+| `evaluate_weaknesses.py` | **Hard Negative Mining**: Evaluates the model against the dataset and generates a confusion report. |
+| `separate_and_analyze.py` | **DEMUCS**: Separates audio into stems (vocals, instruments, etc.) before classification. |
+| `export_to_tflite.py` | **Quantization**: Converts models to TFLite format for edge deployment. Supports `--int8` and `--all`. |
 
 ---
 
 ## 🚀 The Training Pipeline
 
 ### Step 1: Preprocess Audio
-The preprocessor scans your external drive, validates audio quality, normalizes, chunks to 5 seconds, and applies **Advanced Data Augmentation**. It automatically applies pitch shifting, time stretching, and **Multi-SNR Background Noise Mixing** (faint, medium, loud) to teach the model to ignore overlapping noise. It writes all output to the `processed/` folder.
-
 ```bash
 python preprocess_audio.py
 ```
-*Note: You can add an optional `D:\dataset\_background_noise\` folder with custom noise files (wind, rain, static) to be automatically mixed into your training data for extreme real-world robustness.*
+Applies: pitch shifting, time stretching, **SpecAugment frequency masking**, and **Multi-SNR Background Noise Mixing** (faint 15%, medium 30%, loud 50%).
 
-### Step 2: Train the Dual-Head Model
-Train the forensic model using the generated manifest. The model automatically extracts embeddings using a pre-trained backbone, applies **MixUp Augmentation** on the fly (blending sounds together to teach multi-label detection), and trains the Dual-Head classification layers.
+### Step 2: Train the Model
 
-**Standard Training (100 epochs, YAMNet backbone):**
+**Standard Training (YAMNet backbone):**
 ```bash
 python train_forensic_model.py
 ```
 
 **Advanced Training Options:**
 ```bash
-# Fine-tune the deep layers of YAMNet (slower but highly accurate)
+# Fine-tune YAMNet internal layers (more accurate)
 python train_forensic_model.py --finetune
 
-# Use VGGish instead of YAMNet as the audio feature extractor
+# Use VGGish backbone instead
 python train_forensic_model.py --backbone vggish
+
+# Train ALL backbones sequentially overnight
+python train_forensic_model.py --all_models
+
+# Train alternative architectures
+python train_spectrogram_model.py --architecture resnet50
+python train_wav2vec_model.py --epochs 50
 ```
-*Features automatic Early Stopping (patience=15) and Learning Rate Plateau reduction for optimal convergence.*
 
 ### Step 3: Test New Audio
-Test your model against any custom WAV/MP3 file. The tester uses **Multi-Resolution Scanning** (simultaneously checking 0.5s, 2.0s, and 5.0s sliding windows) to catch both short transients (gunshots) and long sustained sounds (sirens) and outputs an exact timeline.
-
 ```bash
-# Analyze a file using a 20% certainty threshold
+# Standard analysis
 python test_model.py "audio.mp3" --threshold 0.20
+
+# Ensemble voting (all models vote)
+python test_model.py "audio.mp3" --ensemble
+
+# Anomaly detection (flag unknown sounds)
+python test_model.py "audio.mp3" --anomaly
+
+# Full power: ensemble + anomaly
+python test_model.py "audio.mp3" --ensemble --anomaly --threshold 0.15
 ```
 
-**Example Output:**
-```text
-🔎 MULTI-RESOLUTION FORENSIC TIMELINE ANALYSIS
-==================================================
-📊 TIMELINE RESULTS (>20% Confidence)
---------------------------------------------------
-📁 MAIN CATEGORIES DETECTED:
-   • VEHICLE         ⏱️ 0.0s - 160.0s
-   • ANIMALS         ⏱️ 2.0s - 9.0s
-   • ENVIRONMENT     ⏱️ 9.0s - 17.0s, 71.0s - 95.0s
+### Step 4: Advanced Tools
+```bash
+# Auto-tune hyperparameters overnight
+python tune_hyperparameters.py --max_trials 100
 
-🏷️ SPECIFIC EVENTS DETECTED:
-   🎯 vehicle/siren             ⏱️ 0.0s - 159.0s
-   🎯 animals/dog               ⏱️ 3.0s - 7.0s
-   🎯 environment/traffic       ⏱️ 9.0s - 15.0s, 72.0s - 95.0s
---------------------------------------------------
+# Knowledge Distillation (compress ensemble into tiny model)
+python train_student_model.py --temperature 3.0
+
+# DEMUCS source separation + analysis
+python separate_and_analyze.py "audio.mp3"
+
+# Active Learning (find uncertain samples)
+python active_learner.py "D:\unlabeled_audio"
+
+# Evaluate model weaknesses
+python evaluate_weaknesses.py
+
+# Export to TFLite for mobile/edge deployment
+python export_to_tflite.py --quantize --all
 ```
 
 ---
 
 ## 🛠 Model Architecture
 
-- **Base Node**: Google YAMNet or VGGish (swappable via command line).
-- **Advanced Augmentation**: Multi-SNR Environmental Mixing & On-The-Fly MixUp.
-- **Feature Extraction**: Global Average Pooling + Global Max Pooling (catches both sustained noise and transient impulses like gunshots).
-- **Core Network**: Shared Dense layers (1024 -> 512) with Batch Normalization and 40% Dropout.
-- **Main Output Head**: Dense (Sigmoid Activation, Binary Crossentropy)
-- **Sub Output Head**: Dense + Main Context merging (Sigmoid Activation, Binary Crossentropy)
+- **Base Backbones**: YAMNet, VGGish, ResNet50, EfficientNet, Wav2Vec 2.0
+- **Advanced Augmentation**: Multi-SNR Noise Mixing, MixUp, SpecAugment Frequency Masking
+- **Loss Functions**: Binary Crossentropy + optional Supervised Contrastive Loss
+- **LSTM Variant**: Bidirectional LSTM for temporal sequence learning
+- **Feature Extraction**: Global Average + Max Pooling
+- **Core Network**: Shared Dense + BatchNorm + Dropout → Dual-Head output
+- **Ensemble Mode**: Multi-model voting system for near-zero false positives
+- **Anomaly Detection**: IsolationForest-based Zero-Shot unknown sound detection
+- **Edge Deployment**: TFLite export with INT8 quantization
 
-All model `.keras` files, labels, and training histories are saved in the local `models/` directory for version control, while heavy audio data remains external.
+All model `.keras` files, labels, and training histories are saved in the local `models/` directory.
