@@ -143,6 +143,27 @@ def augment_audio(audio: np.ndarray, sr: int, ambient_noises: list = None) -> li
             except Exception:
                 pass
     
+    # SpecAugment: Frequency Masking
+    try:
+        S = librosa.feature.melspectrogram(y=audio, sr=sr, n_mels=128)
+        S_masked = S.copy()
+        n_mels = S_masked.shape[0]
+        # Mask 1-3 random frequency bands
+        for _ in range(random.randint(1, 3)):
+            f_start = random.randint(0, n_mels - 20)
+            f_width = random.randint(5, 20)
+            S_masked[f_start:f_start + f_width, :] = 0
+        # Reconstruct audio from masked spectrogram
+        masked_audio = librosa.feature.inverse.mel_to_audio(S_masked, sr=sr)
+        if len(masked_audio) > len(audio):
+            masked_audio = masked_audio[:len(audio)]
+        else:
+            masked_audio = np.pad(masked_audio, (0, max(0, len(audio) - len(masked_audio))))
+        masked_audio = masked_audio / (np.max(np.abs(masked_audio)) + 1e-8)
+        augmented.append((masked_audio, "freq_masked"))
+    except Exception:
+        pass
+    
     return augmented[:AUGMENTATION_MULTIPLIER]
 
 
