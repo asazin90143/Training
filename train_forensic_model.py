@@ -3,6 +3,8 @@ Custom Forensic Audio Model Training Script (Hierarchical)
 Trains a model with two classification heads:
 1. Main Class (e.g., Vehicle)
 2. Sub Class (e.g., Siren)
+
+Supports optional YAMNet fine-tuning with --finetune flag.
 """
 
 import os
@@ -43,6 +45,7 @@ YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"
 DEFAULT_EPOCHS = 100
 DEFAULT_BATCH_SIZE = 32
 DEFAULT_LEARNING_RATE = 0.001
+FINETUNE_LEARNING_RATE = 1e-5  # Much lower LR when fine-tuning YAMNet
 EMBEDDING_SIZE = 1024
 
 
@@ -178,7 +181,7 @@ class HierarchicalDataset:
 
 
 def create_hierarchical_model(num_main, num_sub):
-    """Build dual-head classification model."""
+    """Build dual-head classification model (embedding-based)."""
     input_layer = tf.keras.layers.Input(shape=(EMBEDDING_SIZE * 2,))
     
     # Shared Layers
@@ -192,14 +195,62 @@ def create_hierarchical_model(num_main, num_sub):
     
     # Head 1: Main Class
     main_branch = tf.keras.layers.Dense(256, activation='relu')(x)
-    # Sigmoid for multi-label (independent probabilities)
     main_output = tf.keras.layers.Dense(num_main, activation='sigmoid', name='main_output')(main_branch)
     
     # Head 2: Sub Class (receives shared + main context)
     sub_branch = tf.keras.layers.concatenate([x, main_branch])
     sub_branch = tf.keras.layers.Dense(512, activation='relu')(sub_branch)
     sub_branch = tf.keras.layers.Dropout(0.2)(sub_branch)
-    # Sigmoid for multi-label
+    sub_output = tf.keras.layers.Dense(num_sub, activation='sigmoid', name='sub_output')(sub_branch)
+    
+    model = tf.keras.Model(inputs=input_layer, outputs=[main_output, sub_output])
+    return model
+
+
+class YAMNetLayer(tf.keras.layers.Layer):
+    """Wraps YAMNet as a trainable Keras layer for fine-tuning."""
+    def __init__(self, yamnet_url, trainable=True, **kwargs):
+        super().__init__(**kwargs)
+        self.yamnet_url = yamnet_url
+        self.hub_layer = hub.KerasLayer(yamnet_url, trainable=trainable)
+    
+    def call(self, inputs):
+        # hub.KerasLayer for YAMNet returns (scores, embeddings, spectrogram)
+        scores, embeddings, spectrogram = self.hub_layer(inputs)
+        return embeddings
+
+
+def create_finetune_model(num_main, num_sub):
+    """Build end-to-end model with YAMNet as a trainable feature extractor."""
+    # Input: raw 16kHz waveform (variable length)
+    input_layer = tf.keras.layers.Input(shape=(), dtype=tf.float32, name='waveform')
+    
+    # YAMNet feature extraction (trainable)
+    yamnet_layer = YAMNetLayer(YAMNET_MODEL_URL, trainable=True, name='yamnet')
+    embeddings = yamnet_layer(input_layer)  # (num_frames, 1024)
+    
+    # Pooling: Mean + Max
+    mean_emb = tf.keras.layers.GlobalAveragePooling1D()(embeddings)
+    max_emb = tf.keras.layers.GlobalMaxPooling1D()(embeddings)
+    x = tf.keras.layers.Concatenate()([mean_emb, max_emb])  # (2048,)
+    
+    # Shared Layers
+    x = tf.keras.layers.Dense(1024, activation='relu')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Dropout(0.4)(x)
+    
+    x = tf.keras.layers.Dense(512, activation='relu')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Dropout(0.3)(x)
+    
+    # Head 1: Main Class
+    main_branch = tf.keras.layers.Dense(256, activation='relu')(x)
+    main_output = tf.keras.layers.Dense(num_main, activation='sigmoid', name='main_output')(main_branch)
+    
+    # Head 2: Sub Class
+    sub_branch = tf.keras.layers.concatenate([x, main_branch])
+    sub_branch = tf.keras.layers.Dense(512, activation='relu')(sub_branch)
+    sub_branch = tf.keras.layers.Dropout(0.2)(sub_branch)
     sub_output = tf.keras.layers.Dense(num_sub, activation='sigmoid', name='sub_output')(sub_branch)
     
     model = tf.keras.Model(inputs=input_layer, outputs=[main_output, sub_output])
@@ -225,15 +276,23 @@ def train_model(args):
     (X_train, y_train), (X_test, y_test) = dataset.prepare_data()
     
     # 3. Build Model
-    print("\n🔨 Building dual-head model...")
-    model = create_hierarchical_model(
-        len(dataset.main_classes),
-        len(dataset.sub_classes)
-    )
+    if args.finetune:
+        print("\n🔨 Building FINE-TUNE model (YAMNet trainable)...")
+        model = create_finetune_model(
+            len(dataset.main_classes),
+            len(dataset.sub_classes)
+        )
+    else:
+        print("\n🔨 Building dual-head model...")
+        model = create_hierarchical_model(
+            len(dataset.main_classes),
+            len(dataset.sub_classes)
+        )
     
     # 4. Compile
+    lr = FINETUNE_LEARNING_RATE if args.finetune else args.learning_rate
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=args.learning_rate),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
         loss={
             "main_output": "binary_crossentropy", 
             "sub_output": "binary_crossentropy"
@@ -308,6 +367,8 @@ def main():
     parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
     parser.add_argument("--batch_size", type=int, default=DEFAULT_BATCH_SIZE)
     parser.add_argument("--learning_rate", type=float, default=DEFAULT_LEARNING_RATE)
+    parser.add_argument("--finetune", action="store_true",
+                        help="Fine-tune YAMNet base model (slower but more accurate)")
     args = parser.parse_args()
     
     train_model(args)
