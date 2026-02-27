@@ -105,22 +105,35 @@ def find_latest_model():
 def main():
     parser = argparse.ArgumentParser(description="Export model to TFLite")
     parser.add_argument("--model", type=str, help="Path to Keras model file")
-    parser.add_argument("--quantize", action="store_true", help="Apply quantization for smaller size")
+    parser.add_argument("--quantize", action="store_true", help="Apply dynamic range quantization")
+    parser.add_argument("--int8", action="store_true", help="Apply full INT8 quantization (smallest file)")
+    parser.add_argument("--all", action="store_true", help="Export ALL .keras models in models/ folder")
     
     args = parser.parse_args()
     
-    if args.model:
+    if args.all:
+        # Export every model in the models directory
+        models = list(MODELS_DIR.glob("*.keras"))
+        if not models:
+            print("❌ No .keras models found.")
+            return
+        print(f"📦 Batch exporting {len(models)} models...")
+        for m in models:
+            quantize = args.quantize or args.int8
+            export_to_tflite(str(m), quantize)
+            print()
+    elif args.model:
         model_path = args.model
+        quantize = args.quantize or args.int8
+        export_to_tflite(model_path, quantize)
     else:
-        # Try to find latest model
         model_path = find_latest_model()
         if model_path:
             print(f"📂 Found latest model: {model_path}")
+            quantize = args.quantize or args.int8
+            export_to_tflite(model_path, quantize)
         else:
             print("❌ No trained models found. Run train_forensic_model.py first!")
-            return
-    
-    export_to_tflite(model_path, args.quantize)
 
 if __name__ == "__main__":
     main()
