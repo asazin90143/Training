@@ -47,6 +47,39 @@ def load_latest_model():
         
     return model, labels
 
+
+def load_all_models():
+    """Load ALL .keras models for ensemble voting."""
+    if not MODELS_DIR.exists():
+        print("❌ No models/ directory found.")
+        return [], None
+    
+    models = list(MODELS_DIR.glob("*.keras"))
+    if not models:
+        print("❌ No .keras models found.")
+        return [], None
+    
+    loaded = []
+    labels = None
+    
+    for m_path in models:
+        try:
+            model = tf.keras.models.load_model(str(m_path))
+            loaded.append((m_path.stem, model))
+            print(f"   ✅ Loaded: {m_path.name}")
+            
+            # Load labels from any model (they should all have the same classes)
+            if labels is None:
+                lbl_path = MODELS_DIR / f"{m_path.stem}_labels.json"
+                if lbl_path.exists():
+                    with open(lbl_path) as f:
+                        labels = json.load(f)
+        except Exception as e:
+            print(f"   ⚠️ Skip {m_path.name}: {e}")
+    
+    print(f"\n🗳️ Ensemble loaded: {len(loaded)} models")
+    return loaded, labels
+
 def extract_features_from_chunk(chunk, yamnet):
     try:
         _, emb, _ = yamnet(chunk)
@@ -120,14 +153,24 @@ def analyze_at_resolution(wav, sr, duration, model, yamnet, window_sec, hop_sec,
     return main_detections, sub_detections
 
 
-def predict(audio_path, threshold=0.3):
+def predict(audio_path, threshold=0.3, ensemble=False):
     print("="*50)
-    print("🔎 MULTI-RESOLUTION FORENSIC TIMELINE ANALYSIS")
+    if ensemble:
+        print("🗳️ ENSEMBLE MULTI-RESOLUTION FORENSIC ANALYSIS")
+    else:
+        print("🔎 MULTI-RESOLUTION FORENSIC TIMELINE ANALYSIS")
     print("="*50)
     
-    # 1. Load Custom Model
-    model, labels = load_latest_model()
-    if not model or not labels: return
+    # 1. Load Model(s)
+    if ensemble:
+        print("📂 Loading ALL models for ensemble voting...")
+        models_list, labels = load_all_models()
+        if not models_list or not labels: return
+        model = None  # Not used in ensemble mode
+    else:
+        model, labels = load_latest_model()
+        if not model or not labels: return
+        models_list = None
     
     # 2. Load YAMNet
     print("📦 Loading YAMNet base...")
@@ -159,14 +202,31 @@ def predict(audio_path, threshold=0.3):
     
     for win, hop, label in resolutions:
         print(f"⏳ Scanning at {label} resolution...")
-        main_det, sub_det = analyze_at_resolution(
-            wav, sr, duration, model, yamnet, win, hop, threshold, labels
-        )
-        # Merge detections from all resolutions
-        for cls, intervals in main_det.items():
-            all_main[cls].extend(intervals)
-        for cls, intervals in sub_det.items():
-            all_sub[cls].extend(intervals)
+        
+        if ensemble and models_list:
+            # Ensemble: run all models and average predictions
+            all_main_dets = defaultdict(list)
+            all_sub_dets = defaultdict(list)
+            for m_name, m_model in models_list:
+                m_det, s_det = analyze_at_resolution(
+                    wav, sr, duration, m_model, yamnet, win, hop, threshold, labels
+                )
+                for cls, intervals in m_det.items():
+                    all_main_dets[cls].extend(intervals)
+                for cls, intervals in s_det.items():
+                    all_sub_dets[cls].extend(intervals)
+            for cls, intervals in all_main_dets.items():
+                all_main[cls].extend(intervals)
+            for cls, intervals in all_sub_dets.items():
+                all_sub[cls].extend(intervals)
+        else:
+            main_det, sub_det = analyze_at_resolution(
+                wav, sr, duration, model, yamnet, win, hop, threshold, labels
+            )
+            for cls, intervals in main_det.items():
+                all_main[cls].extend(intervals)
+            for cls, intervals in sub_det.items():
+                all_sub[cls].extend(intervals)
 
     # 5. Display Results
     print(f"\n📊 TIMELINE RESULTS (>{threshold*100:.0f}% Confidence, Multi-Resolution)")
@@ -198,10 +258,11 @@ def main():
     parser = argparse.ArgumentParser(description="Test forensic audio model on a file")
     parser.add_argument("file", nargs="?", help="Path to the audio file (.wav, .mp3)")
     parser.add_argument("--threshold", type=float, default=0.3, help="Confidence threshold (0.0 to 1.0) to detect an event (default 0.3)")
+    parser.add_argument("--ensemble", action="store_true", help="Use ALL models in models/ for ensemble voting")
     args = parser.parse_args()
     
     if args.file:
-        predict(args.file, threshold=args.threshold)
+        predict(args.file, threshold=args.threshold, ensemble=args.ensemble)
     else:
         print("Usage: python test_model.py <file.wav> [--threshold 0.3]")
 
