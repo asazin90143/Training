@@ -90,7 +90,7 @@ class HierarchicalDataset:
             print(f"  ⚠️ Error reading {audio_path}: {e}")
             return None
 
-    def prepare_data(self, test_split=0.2):
+    def prepare_data(self, test_split=0.2, mixup=True):
         print("\n🔄 Extracting embeddings from processed audio...")
         X = []
         y_main = []
@@ -163,14 +163,22 @@ class HierarchicalDataset:
         split_point = int(len(X) * (1 - test_split))
         
         X_train, X_test = X[:split_point], X[split_point:]
+        y_main_train, y_main_test = y_main_oh[:split_point], y_main_oh[split_point:]
+        y_sub_train, y_sub_test = y_sub_oh[:split_point], y_sub_oh[split_point:]
+        
+        # MixUp Augmentation (training set only)
+        if mixup and len(X_train) > 10:
+            X_train, y_main_train, y_sub_train = self._apply_mixup(
+                X_train, y_main_train, y_sub_train
+            )
         
         y_train = {
-            "main_output": y_main_oh[:split_point],
-            "sub_output": y_sub_oh[:split_point]
+            "main_output": y_main_train,
+            "sub_output": y_sub_train
         }
         y_test = {
-            "main_output": y_main_oh[split_point:],
-            "sub_output": y_sub_oh[split_point:]
+            "main_output": y_main_test,
+            "sub_output": y_sub_test
         }
         
         print(f"\n📊 Data split:")
@@ -178,6 +186,49 @@ class HierarchicalDataset:
         print(f"   Testing:  {len(X_test)} samples")
         
         return (X_train, y_train), (X_test, y_test)
+    
+    def _apply_mixup(self, X, y_main, y_sub, alpha=0.4, ratio=0.3):
+        """
+        MixUp augmentation: blend random pairs of samples together.
+        This teaches the model that multiple sounds can co-exist.
+        alpha: Beta distribution parameter (lower = closer to original)
+        ratio: proportion of extra mixed samples to add (0.3 = 30%)
+        """
+        n_samples = len(X)
+        n_mix = int(n_samples * ratio)
+        
+        print(f"   🔀 Applying MixUp augmentation ({n_mix} blended samples)...")
+        
+        X_mix = []
+        y_main_mix = []
+        y_sub_mix = []
+        
+        for _ in range(n_mix):
+            # Pick two random samples
+            i, j = np.random.choice(n_samples, 2, replace=False)
+            
+            # Random blend ratio from Beta distribution
+            lam = np.random.beta(alpha, alpha)
+            
+            # Blend embeddings
+            x_new = lam * X[i] + (1 - lam) * X[j]
+            
+            # Blend labels (soft labels enable multi-label learning)
+            y_m_new = lam * y_main[i] + (1 - lam) * y_main[j]
+            y_s_new = lam * y_sub[i] + (1 - lam) * y_sub[j]
+            
+            X_mix.append(x_new)
+            y_main_mix.append(y_m_new)
+            y_sub_mix.append(y_s_new)
+        
+        # Concatenate original + mixed
+        X_out = np.concatenate([X, np.array(X_mix)], axis=0)
+        y_main_out = np.concatenate([y_main, np.array(y_main_mix)], axis=0)
+        y_sub_out = np.concatenate([y_sub, np.array(y_sub_mix)], axis=0)
+        
+        # Shuffle everything
+        idx = np.random.permutation(len(X_out))
+        return X_out[idx], y_main_out[idx], y_sub_out[idx]
 
 
 def create_hierarchical_model(num_main, num_sub):
