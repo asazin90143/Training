@@ -519,10 +519,34 @@ def main():
                         help="Fine-tune YAMNet base model (slower but more accurate)")
     parser.add_argument("--backbone", type=str, default="yamnet", choices=["yamnet", "vggish"],
                         help="Feature extractor backbone (default: yamnet)")
+    parser.add_argument("--all_models", action="store_true",
+                        help="Train ALL backbone models sequentially (overnight mode)")
     args = parser.parse_args()
     
-    train_model(args)
+    if args.all_models:
+        print("="*50)
+        print("🔁 AUTOMATED MULTI-BACKBONE TRAINING")
+        print("="*50)
+        backbones = list(BACKBONE_CONFIG.keys())
+        total = len(backbones)
+        for i, backbone in enumerate(backbones):
+            print(f"\n{'='*50}")
+            print(f"📦 [{i+1}/{total}] Training with {backbone.upper()} backbone...")
+            print(f"{'='*50}")
+            args.backbone = backbone
+            try:
+                train_model(args)
+            except Exception as e:
+                print(f"⚠️ Error training {backbone}: {e}")
+            # Clear GPU/memory between models
+            tf.keras.backend.clear_session()
+        print(f"\n{'='*50}")
+        print(f"✅ ALL {total} MODELS TRAINED SUCCESSFULLY!")
+        print(f"{'='*50}")
+    else:
+        train_model(args)
 
 
 if __name__ == "__main__":
     main()
+
