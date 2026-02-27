@@ -324,6 +324,41 @@ def create_finetune_model(num_main, num_sub):
     return model
 
 
+def create_lstm_model(num_main, num_sub, embedding_size=1024, max_frames=10):
+    """Build LSTM-based model that processes embedding sequences for temporal learning."""
+    input_layer = tf.keras.layers.Input(shape=(max_frames, embedding_size), name='embedding_sequence')
+    
+    # Bidirectional LSTM captures patterns in both directions
+    x = tf.keras.layers.Bidirectional(
+        tf.keras.layers.LSTM(256, return_sequences=True)
+    )(input_layer)
+    x = tf.keras.layers.Bidirectional(
+        tf.keras.layers.LSTM(128, return_sequences=False)
+    )(x)
+    
+    # Shared Dense Layers
+    x = tf.keras.layers.Dense(512, activation='relu')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Dropout(0.4)(x)
+    
+    x = tf.keras.layers.Dense(256, activation='relu')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Dropout(0.3)(x)
+    
+    # Head 1: Main Class
+    main_branch = tf.keras.layers.Dense(128, activation='relu')(x)
+    main_output = tf.keras.layers.Dense(num_main, activation='sigmoid', name='main_output')(main_branch)
+    
+    # Head 2: Sub Class
+    sub_branch = tf.keras.layers.concatenate([x, main_branch])
+    sub_branch = tf.keras.layers.Dense(256, activation='relu')(sub_branch)
+    sub_branch = tf.keras.layers.Dropout(0.2)(sub_branch)
+    sub_output = tf.keras.layers.Dense(num_sub, activation='sigmoid', name='sub_output')(sub_branch)
+    
+    model = tf.keras.Model(inputs=input_layer, outputs=[main_output, sub_output])
+    return model
+
+
 def train_model(args):
     if not TF_AVAILABLE or not LIBROSA_AVAILABLE:
         print("❌ Missing dependencies: pip install tensorflow tensorflow-hub librosa")
