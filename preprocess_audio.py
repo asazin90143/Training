@@ -128,17 +128,20 @@ def augment_audio(audio: np.ndarray, sr: int, ambient_noises: list = None) -> li
         pass
     
     if ambient_noises and len(ambient_noises) > 0:
-        try:
-            bg_noise = random.choice(ambient_noises)
-            if len(bg_noise) < len(audio):
-                repeats = int(np.ceil(len(audio) / len(bg_noise)))
-                bg_noise = np.tile(bg_noise, repeats)
-            bg_noise = bg_noise[:len(audio)]
-            mixed = (audio * 0.8) + (bg_noise * 0.3)
-            mixed = mixed / np.max(np.abs(mixed))
-            augmented.append((mixed, "mixed_bg"))
-        except Exception:
-            pass
+        # Mix at multiple SNR levels for robustness
+        snr_levels = [("mixed_faint", 0.15), ("mixed_med", 0.3), ("mixed_loud", 0.5)]
+        for suffix, noise_vol in snr_levels:
+            try:
+                bg_noise = random.choice(ambient_noises)
+                if len(bg_noise) < len(audio):
+                    repeats = int(np.ceil(len(audio) / len(bg_noise)))
+                    bg_noise = np.tile(bg_noise, repeats)
+                bg_noise = bg_noise[:len(audio)]
+                mixed = (audio * 0.8) + (bg_noise * noise_vol)
+                mixed = mixed / np.max(np.abs(mixed))
+                augmented.append((mixed, suffix))
+            except Exception:
+                pass
     
     return augmented[:AUGMENTATION_MULTIPLIER]
 
@@ -247,6 +250,8 @@ def process_dataset():
     # Pre-load ambient/environment noises for mixing
     print("\n  🎵 Pre-loading background noises for mixing...")
     ambient_noises = []
+    
+    # Source 1: Environment folder (existing dataset)
     env_dir = DATASET_DIR / "environment"
     if env_dir.exists():
         for sub_dir in env_dir.iterdir():
@@ -259,6 +264,18 @@ def process_dataset():
                         ambient_noises.append(audio)
                 except:
                     pass
+    
+    # Source 2: Dedicated background noise folder (optional, for realism)
+    bg_noise_dir = DATASET_DIR / "_background_noise"
+    if bg_noise_dir.exists():
+        print("    📂 Found _background_noise folder, loading extras...")
+        for f in list(bg_noise_dir.rglob("*.wav")) + list(bg_noise_dir.rglob("*.mp3")):
+            try:
+                audio, _ = librosa.load(str(f), sr=TARGET_SR, mono=True)
+                if len(audio) > TARGET_SR * 1.0:
+                    ambient_noises.append(audio)
+            except:
+                pass
     
     if len(ambient_noises) > 300:
         random.shuffle(ambient_noises)
