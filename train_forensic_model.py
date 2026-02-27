@@ -55,6 +55,48 @@ FINETUNE_LEARNING_RATE = 1e-5
 EMBEDDING_SIZE = 1024  # Default (YAMNet)
 
 
+class SupervisedContrastiveLoss(tf.keras.losses.Loss):
+    """Supervised Contrastive Loss for tighter class clustering in embedding space.
+    Forces embeddings of the same class to cluster together while pushing
+    different classes apart. Use with --contrastive flag."""
+    def __init__(self, temperature=0.07, **kwargs):
+        super().__init__(**kwargs)
+        self.temperature = temperature
+    
+    def call(self, labels, embeddings):
+        # L2 normalize embeddings
+        embeddings = tf.math.l2_normalize(embeddings, axis=1)
+        # Compute similarity matrix
+        similarity = tf.matmul(embeddings, embeddings, transpose_b=True)
+        similarity = similarity / self.temperature
+        
+        # Create mask: 1 where labels match, 0 otherwise
+        labels = tf.cast(tf.argmax(labels, axis=1), tf.int32)
+        labels_eq = tf.cast(tf.equal(tf.expand_dims(labels, 0), tf.expand_dims(labels, 1)), tf.float32)
+        
+        # Remove diagonal (self-similarity)
+        batch_size = tf.shape(embeddings)[0]
+        mask = tf.ones_like(labels_eq) - tf.eye(batch_size)
+        labels_eq = labels_eq * mask
+        
+        # Log-sum-exp trick for numerical stability
+        logits_max = tf.reduce_max(similarity * mask, axis=1, keepdims=True)
+        logits = (similarity - logits_max) * mask
+        
+        exp_logits = tf.exp(logits) * mask
+        log_prob = logits - tf.math.log(tf.reduce_sum(exp_logits, axis=1, keepdims=True) + 1e-8)
+        
+        # Mean of log-likelihood over positive pairs
+        pos_count = tf.reduce_sum(labels_eq, axis=1)
+        mean_log_prob = tf.reduce_sum(labels_eq * log_prob, axis=1) / (pos_count + 1e-8)
+        
+        loss = -mean_log_prob
+        # Only use samples that have at least one positive pair
+        valid = tf.cast(pos_count > 0, tf.float32)
+        loss = tf.reduce_sum(loss * valid) / (tf.reduce_sum(valid) + 1e-8)
+        return loss
+
+
 class HierarchicalDataset:
     def __init__(self, manifest_path: Path, yamnet_model, backbone="yamnet"):
         self.manifest_path = manifest_path
