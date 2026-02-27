@@ -72,9 +72,57 @@ def merge_intervals(intervals):
             merged.append(list(current))
     return merged
 
-def predict(audio_path, window_sec=2.0, hop_sec=0.5, threshold=0.3):
+def analyze_at_resolution(wav, sr, duration, model, yamnet, window_sec, hop_sec, threshold, labels):
+    """Run prediction at a single resolution and return raw detections."""
+    main_classes = labels.get("main_classes", [])
+    sub_classes = labels.get("sub_classes", [])
+    
+    window_samples = int(window_sec * sr)
+    hop_samples = int(hop_sec * sr)
+    
+    features_list = []
+    timestamps = []
+    
+    for start in range(0, len(wav), hop_samples):
+        end = start + window_samples
+        chunk = wav[start:end]
+        
+        if len(chunk) < sr * 0.5:
+            continue
+            
+        feat = extract_features_from_chunk(chunk, yamnet)
+        if feat is not None:
+            features_list.append(feat)
+            start_t = start / sr
+            end_t = min((start + len(chunk)) / sr, duration)
+            timestamps.append((start_t, end_t))
+    
+    if not features_list:
+        return {}, {}
+    
+    X = tf.stack(features_list)
+    preds = model.predict(X, verbose=0)
+    
+    main_preds = preds[0]
+    sub_preds = preds[1]
+    
+    main_detections = defaultdict(list)
+    sub_detections = defaultdict(list)
+    
+    for i, (start_t, end_t) in enumerate(timestamps):
+        for cls_idx, conf in enumerate(main_preds[i]):
+            if conf >= threshold:
+                main_detections[main_classes[cls_idx]].append((start_t, end_t))
+        for cls_idx, conf in enumerate(sub_preds[i]):
+            if conf >= threshold:
+                sub_detections[sub_classes[cls_idx]].append((start_t, end_t))
+    
+    return main_detections, sub_detections
+
+
+def predict(audio_path, threshold=0.3):
     print("="*50)
-    print("🔎 HIERARCHICAL FORENSIC TIMELINE ANALYSIS")
+    print("🔎 MULTI-RESOLUTION FORENSIC TIMELINE ANALYSIS")
     print("="*50)
     
     # 1. Load Custom Model
@@ -96,83 +144,55 @@ def predict(audio_path, window_sec=2.0, hop_sec=0.5, threshold=0.3):
     duration = len(wav) / sr
     print(f"⏱️ Audio Duration: {duration:.1f} seconds")
     
-    window_samples = int(window_sec * sr)
-    hop_samples = int(hop_sec * sr)
+    # 4. Multi-Resolution Analysis
+    # Short window: catches transient sounds like gunshots, glass shatters
+    # Medium window: catches barks, screams, car horns
+    # Long window: catches sustained sounds like sirens, traffic, rain
+    resolutions = [
+        (0.5, 0.25, "SHORT (0.5s)"),
+        (2.0, 0.5,  "MEDIUM (2.0s)"),
+        (5.0, 1.0,  "LONG (5.0s)")
+    ]
     
-    features_list = []
-    timestamps = []
+    all_main = defaultdict(list)
+    all_sub = defaultdict(list)
     
-    # Chunk audio
-    print(f"⏳ Extracting features in {window_sec}s windows (sliding every {hop_sec}s)...")
-    for start in range(0, len(wav), hop_samples):
-        end = start + window_samples
-        chunk = wav[start:end]
-        
-        if len(chunk) < sr * 1.0: 
-            continue
-            
-        feat = extract_features_from_chunk(chunk, yamnet)
-        if feat is not None:
-            features_list.append(feat)
-            
-            start_t = start / sr
-            end_t = min((start + len(chunk)) / sr, duration)
-            timestamps.append((start_t, end_t))
-            
-    if not features_list:
-        print("❌ No valid audio segments found.")
-        return
-        
-    # 4. Predict
-    X = tf.stack(features_list)
-    preds = model.predict(X, verbose=0)
-    
-    main_preds = preds[0] # (num_windows, num_main_classes)
-    sub_preds = preds[1]  # (num_windows, num_sub_classes)
-    
-    main_classes = labels.get("main_classes", [])
-    sub_classes = labels.get("sub_classes", [])
-    
-    # Store raw interval detections
-    main_detections = defaultdict(list)
-    sub_detections = defaultdict(list)
-    
-    for i, (start_t, end_t) in enumerate(timestamps):
-        # Process Main Classes
-        for cls_idx, conf in enumerate(main_preds[i]):
-            if conf >= threshold:
-                main_detections[main_classes[cls_idx]].append((start_t, end_t))
-                
-        # Process Sub Classes
-        for cls_idx, conf in enumerate(sub_preds[i]):
-            if conf >= threshold:
-                sub_detections[sub_classes[cls_idx]].append((start_t, end_t))
-                
+    for win, hop, label in resolutions:
+        print(f"⏳ Scanning at {label} resolution...")
+        main_det, sub_det = analyze_at_resolution(
+            wav, sr, duration, model, yamnet, win, hop, threshold, labels
+        )
+        # Merge detections from all resolutions
+        for cls, intervals in main_det.items():
+            all_main[cls].extend(intervals)
+        for cls, intervals in sub_det.items():
+            all_sub[cls].extend(intervals)
+
     # 5. Display Results
-    print(f"\n📊 TIMELINE RESULTS (>{threshold*100:.0f}% Confidence)")
-    print("-" * 50)
+    print(f"\n📊 TIMELINE RESULTS (>{threshold*100:.0f}% Confidence, Multi-Resolution)")
+    print("-" * 55)
     
     # --- Main Class ---
     print("📁 MAIN CATEGORIES DETECTED:")
-    if not main_detections:
+    if not all_main:
         print("   (None above threshold)")
     else:
-        for cls_name, intervals in main_detections.items():
+        for cls_name, intervals in all_main.items():
             merged = merge_intervals(intervals)
             timeline = ", ".join([f"{s:.1f}s - {e:.1f}s" for s, e in merged])
             print(f"   • {cls_name.upper():<15} ⏱️ {timeline}")
 
     # --- Sub Class ---
     print("\n🏷️ SPECIFIC EVENTS DETECTED:")
-    if not sub_detections:
+    if not all_sub:
         print("   (None above threshold)")
     else:
-        for cls_name, intervals in sub_detections.items():
+        for cls_name, intervals in all_sub.items():
             merged = merge_intervals(intervals)
             timeline = ", ".join([f"{s:.1f}s - {e:.1f}s" for s, e in merged])
             print(f"   🎯 {cls_name:<25} ⏱️ {timeline}")
             
-    print("-" * 50)
+    print("-" * 55)
 
 def main():
     parser = argparse.ArgumentParser(description="Test forensic audio model on a file")
