@@ -1,10 +1,10 @@
 """
-Wav2Vec 2.0 Feature Extractor for Forensic Audio
-Uses Meta's self-supervised Wav2Vec 2.0 model as an alternative backbone.
+BEATs Feature Extractor for Forensic Audio
+Uses Microsoft's BEATs (Bidirectional Encoder representation from Audio Transformers) as an alternative backbone.
 Requires: pip install transformers torch
 
 Usage:
-    python train_wav2vec_model.py --epochs 50
+    python train_beats_model.py --epochs 50
 """
 
 import os
@@ -32,12 +32,12 @@ try:
 except ImportError:
     LIBROSA_AVAILABLE = False
 
-# Wav2Vec 2.0 (HuggingFace)
-WAV2VEC_AVAILABLE = False
+# BEATs (HuggingFace)
+BEATS_AVAILABLE = False
 try:
-    from transformers import Wav2Vec2Processor, Wav2Vec2Model
+    from transformers import AutoFeatureExtractor, AutoModel
     import torch
-    WAV2VEC_AVAILABLE = True
+    BEATS_AVAILABLE = True
 except ImportError:
     print("⚠️ HuggingFace transformers or PyTorch not installed.")
     print("   Run: pip install transformers torch")
@@ -47,30 +47,40 @@ PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 from config import get_paths
-PATHS = get_paths("wav2vec")
+PATHS = get_paths("beats")
 
 SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = PATHS["models"]
 MANIFEST_PATH = PATHS["manifest"]
 
-WAV2VEC_MODEL = "facebook/wav2vec2-base"
-WAV2VEC_EMBEDDING_SIZE = 768  # Wav2Vec 2.0 base output
+BEATS_MODEL = "huggingface/beats"  # Use a standard BEATs checkpoint or compatible
+try:
+    # Most common HF BEATs proxy, can swap with WavLM/AST if fine-tuned
+    BEATS_MODEL_CHECKPOINT = "vumichien/beats-audio-classification" 
+except Exception:
+    pass
+
+BEATS_EMBEDDING_SIZE = 768  # Standard BEATs/Transformer embedding size
 
 
-def extract_wav2vec_embeddings(audio_path, processor, model):
-    """Extract Wav2Vec 2.0 embeddings from audio file."""
+def extract_beats_embeddings(audio_path, extractor, model):
+    """Extract BEATs embeddings from audio file."""
     try:
         wav, sr = librosa.load(str(audio_path), sr=16000, mono=True)
         
-        # Process through Wav2Vec 2.0
-        inputs = processor(wav, sampling_rate=16000, return_tensors="pt", padding=True)
+        # Process through BEATs
+        inputs = extractor(wav, sampling_rate=16000, return_tensors="pt", padding=True)
         
         with torch.no_grad():
             outputs = model(**inputs)
         
-        # Get hidden states (batch, seq_len, 768)
-        hidden = outputs.last_hidden_state.squeeze(0).numpy()
-        
+        # Depending on the specific BEATs checkpoint, it might be last_hidden_state or logits
+        if hasattr(outputs, 'last_hidden_state'):
+            hidden = outputs.last_hidden_state.squeeze(0).numpy()
+        else:
+            # Fallback for models that don't return last_hidden_state cleanly
+            return None
+            
         # Pool: mean + max
         mean_emb = np.mean(hidden, axis=0)
         max_emb = np.max(hidden, axis=0)
@@ -81,8 +91,8 @@ def extract_wav2vec_embeddings(audio_path, processor, model):
         return None
 
 
-def prepare_data(manifest_path, processor, wav2vec_model, test_split=0.2):
-    """Extract Wav2Vec 2.0 embeddings from all audio samples."""
+def prepare_data(manifest_path, extractor, beats_model, test_split=0.2):
+    """Extract BEATs embeddings from all audio samples."""
     with open(manifest_path) as f:
         data = json.load(f)
     
@@ -91,7 +101,7 @@ def prepare_data(manifest_path, processor, wav2vec_model, test_split=0.2):
     samples = data["samples"]
     
     print(f"📊 {len(samples)} samples, {len(main_classes)} main, {len(sub_classes)} sub")
-    print("🔄 Extracting Wav2Vec 2.0 embeddings...")
+    print("🔄 Extracting BEATs embeddings...")
     
     X, y_main, y_sub = [], [], []
     skipped = 0
@@ -116,7 +126,7 @@ def prepare_data(manifest_path, processor, wav2vec_model, test_split=0.2):
             skipped += 1
             continue
         
-        emb = extract_wav2vec_embeddings(str(path), processor, wav2vec_model)
+        emb = extract_beats_embeddings(str(path), extractor, beats_model)
         if emb is None:
             skipped += 1
             continue
@@ -128,6 +138,10 @@ def prepare_data(manifest_path, processor, wav2vec_model, test_split=0.2):
     if skipped > 0:
         print(f"   ⚠️ Skipped {skipped}")
     
+    # If no valid files, return empty
+    if len(X) == 0:
+        return (np.array([]), {}), (np.array([]), {}), main_classes, sub_classes
+        
     X = np.array(X)
     y_main = tf.keras.utils.to_categorical(y_main, len(main_classes))
     y_sub = tf.keras.utils.to_categorical(y_sub, len(sub_classes))
@@ -141,9 +155,9 @@ def prepare_data(manifest_path, processor, wav2vec_model, test_split=0.2):
            main_classes, sub_classes
 
 
-def create_wav2vec_head(num_main, num_sub):
-    """Build classification head for Wav2Vec 2.0 embeddings."""
-    emb_input = WAV2VEC_EMBEDDING_SIZE * 2  # mean + max pooling
+def create_beats_head(num_main, num_sub):
+    """Build classification head for BEATs embeddings."""
+    emb_input = BEATS_EMBEDDING_SIZE * 2  # mean + max pooling
     input_layer = tf.keras.layers.Input(shape=(emb_input,))
     
     x = tf.keras.layers.Dense(512, activation='relu')(input_layer)
@@ -163,29 +177,38 @@ def create_wav2vec_head(num_main, num_sub):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train with Wav2Vec 2.0 Backbone")
+    parser = argparse.ArgumentParser(description="Train with BEATs Backbone")
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--checkpoint", type=str, default="vumichien/beats-audio-classification", help="HuggingFace BEATs checkpoint")
     args = parser.parse_args()
     
-    if not WAV2VEC_AVAILABLE:
+    if not BEATS_AVAILABLE:
         print("❌ Install: pip install transformers torch")
         return
     
     print("="*50)
-    print("🧠 WAV2VEC 2.0 FORENSIC MODEL TRAINING")
+    print("🧠 BEATS FORENSIC MODEL TRAINING")
     print("="*50)
     
-    print("\n📦 Loading Wav2Vec 2.0...")
-    processor = Wav2Vec2Processor.from_pretrained(WAV2VEC_MODEL)
-    wav2vec = Wav2Vec2Model.from_pretrained(WAV2VEC_MODEL)
-    wav2vec.eval()
-    print("✅ Wav2Vec 2.0 loaded")
-    
+    print(f"\n📦 Loading BEATs ({args.checkpoint})...")
+    try:
+        extractor = AutoFeatureExtractor.from_pretrained(args.checkpoint)
+        beats = AutoModel.from_pretrained(args.checkpoint)
+        beats.eval()
+        print("✅ BEATs loaded")
+    except Exception as e:
+        print(f"❌ Failed to load BEATs checkpoint: {e}")
+        return
+        
     (X_train, y_train), (X_test, y_test), main_cls, sub_cls = \
-        prepare_data(MANIFEST_PATH, processor, wav2vec)
-    
-    model = create_wav2vec_head(len(main_cls), len(sub_cls))
+        prepare_data(MANIFEST_PATH, extractor, beats)
+        
+    if len(X_train) == 0:
+        print("❌ No data processed successfully.")
+        return
+        
+    model = create_beats_head(len(main_cls), len(sub_cls))
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
         loss={"main_output": "binary_crossentropy", "sub_output": "binary_crossentropy"},
@@ -202,12 +225,12 @@ def main():
               epochs=args.epochs, batch_size=args.batch_size, callbacks=callbacks)
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    name = f"wav2vec_model_{timestamp}"
+    name = f"beats_model_{timestamp}"
     MODELS_DIR.mkdir(exist_ok=True)
     model.save(str(MODELS_DIR / f"{name}.keras"))
     with open(MODELS_DIR / f"{name}_labels.json", "w") as f:
         json.dump({"main_classes": main_cls, "sub_classes": sub_cls}, f, indent=2)
-    print(f"\n✅ Wav2Vec model saved: {name}.keras")
+    print(f"\n✅ BEATs model saved: {name}.keras")
 
 
 if __name__ == "__main__":

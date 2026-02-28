@@ -23,7 +23,7 @@ BACKBONE_MODEL_DIRS = {
     "yamnet": "yamnet",
     "vggish": "vggish",
     "spectrogram": "spectrogram",
-    "wav2vec": "wav2vec",
+    "beats": "beats",
     "student": "student",
     "tuned": "tuned",
 }

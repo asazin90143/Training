@@ -69,10 +69,10 @@ python src/training/train_spectrogram_model.py --architecture resnet50
 python src/training/train_spectrogram_model.py --architecture efficientnet
 ```
 
-### Wav2Vec 2.0 (Self-Supervised)
-Uses Meta's Wav2Vec 2.0 for deeper acoustic understanding. Requires `pip install transformers torch`.
+### BEATs (Self-Supervised)
+Uses Microsoft's BEATs model. Requires `pip install transformers torch`.
 ```bash
-python src/training/train_wav2vec_model.py --epochs 50
+python src/training/train_beats_model.py --epochs 50
 ```
 
 ### Automated Hyperparameter Tuning
@@ -130,7 +130,7 @@ training/
 │   ├── training/
 │   │   ├── train_forensic_model.py        # Core training (--all_models)
 │   │   ├── train_spectrogram_model.py     # Vision ViT
-│   │   ├── train_wav2vec_model.py         # Wav2Vec 2.0
+│   │   ├── train_beats_model.py           # BEATs
 │   │   ├── train_student_model.py         # Knowledge Distillation
 │   │   └── tune_hyperparameters.py        # KerasTuner
 │   ├── testing/
@@ -146,7 +146,7 @@ training/
 │   ├── yamnet/                            # YAMNet-trained models
 │   ├── vggish/                            # VGGish-trained models
 │   ├── spectrogram/                       # ViT-trained models
-│   ├── wav2vec/                           # Wav2Vec-trained models
+│   ├── beats/                             # BEATs-trained models
 │   ├── student/                           # Distilled student models
 │   └── tuned/                             # KerasTuner best models
 ```

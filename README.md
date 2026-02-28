@@ -24,7 +24,7 @@ pip install tensorflow tensorflow-hub librosa soundfile numpy pandas scikit-lear
 **Optional (for advanced features):**
 ```bash
 pip install keras-tuner        # Automated hyperparameter tuning
-pip install transformers torch # Wav2Vec 2.0 backbone
+pip install transformers torch # BEATs backbone
 pip install demucs             # Audio source separation
 ```
 
@@ -46,7 +46,7 @@ training/
 │   ├── training/
 │   │   ├── train_forensic_model.py        # Core training (YAMNet/VGGish, --all_models)
 │   │   ├── train_spectrogram_model.py     # Vision ViT (ResNet50/EfficientNet)
-│   │   ├── train_wav2vec_model.py         # Wav2Vec 2.0 backbone
+│   │   ├── train_beats_model.py           # BEATs backbone
 │   │   ├── train_student_model.py         # Knowledge Distillation
 │   │   ├── train_kfold.py                 # K-Fold Cross Validation
 │   │   └── tune_hyperparameters.py        # KerasTuner auto-optimization
@@ -68,7 +68,7 @@ training/
 │   ├── yamnet/
 │   ├── vggish/
 │   ├── spectrogram/
-│   ├── wav2vec/
+│   ├── beats/
 │   ├── student/
 │   └── tuned/
 │
@@ -105,7 +105,7 @@ python src/training/train_forensic_model.py --all_models
 
 # Train alternative architectures
 python src/training/train_spectrogram_model.py --architecture resnet50
-python src/training/train_wav2vec_model.py --epochs 50
+python src/training/train_beats_model.py --epochs 50
 ```
 
 ### Step 3: Test New Audio
@@ -148,7 +148,7 @@ python src/utils/export_to_tflite.py --quantize --all
 
 ## 🛠 Model Architecture
 
-- **Base Backbones**: YAMNet, VGGish, ResNet50, EfficientNet, Wav2Vec 2.0
+- **Base Backbones**: YAMNet, VGGish, ResNet50, EfficientNet, BEATs
 - **Advanced Augmentation**: Multi-SNR Noise Mixing, MixUp, SpecAugment Frequency Masking
 - **Loss Functions**: Binary Crossentropy + optional Supervised Contrastive Loss
 - **LSTM Variant**: Bidirectional LSTM for temporal sequence learning
