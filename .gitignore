@@ -13,3 +13,12 @@ __pycache__/
 
 # Generated Data
 data_manifest.json
+
+# Microsoft unilm repository (cloned for BEATs)
+**/unilm/
+
+# Model checkpoints (too large for git)
+*.pt
+
+# Virtual environment
+.venv/
