@@ -62,10 +62,10 @@ PATHS = get_paths("beats")
 # --- Add the cloned BEATs source to Python path ---
 # Microsoft's BEATs code uses relative imports (from backbone import ..., from modules import ...)
 # so we need to add the beats directory itself to sys.path
-BEATS_SOURCE_DIR = Path(__file__).parent / "unilm" / "beats"
+BEATS_SOURCE_DIR = Path(__file__).parent / "beats"
 if not BEATS_SOURCE_DIR.exists():
     # Also check in utils (user may have cloned there)
-    BEATS_SOURCE_DIR_ALT = Path(__file__).parent.parent / "utils" / "unilm" / "beats"
+    BEATS_SOURCE_DIR_ALT = Path(__file__).parent.parent / "utils" / "beats"
     if BEATS_SOURCE_DIR_ALT.exists():
         BEATS_SOURCE_DIR = BEATS_SOURCE_DIR_ALT
 
@@ -250,8 +250,7 @@ def main():
     # --- Verify BEATs source code is available ---
     if not BEATS_SOURCE_DIR.exists():
         print(f"\n❌ BEATs source code not found at: {BEATS_SOURCE_DIR}")
-        print("   Clone Microsoft's unilm repository:")
-        print("   git clone https://github.com/microsoft/unilm.git src/training/unilm")
+        print("   Clone Microsoft's repository and move the beats folder here.")
         return
 
     # --- Find checkpoint ---
