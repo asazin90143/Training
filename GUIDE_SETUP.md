@@ -69,8 +69,15 @@ python src/training/train_spectrogram_model.py --architecture resnet50
 python src/training/train_spectrogram_model.py --architecture efficientnet
 ```
 
-### BEATs (Self-Supervised)
-Uses Microsoft's BEATs model. Requires `pip install transformers torch`.
+### BEATs (Self-Supervised Heavyweight)
+Uses Microsoft's official BEATs (Acoustic Tokenizer) model to deeply understand raw audio. 
+Requires `pip install torch torchaudio`.
+
+> ⚠️ **Checkpoint Required**:  
+> Microsoft does not include the 350MB model weights on GitHub.   
+> 1. Download [BEATs_iter3_plus_AS2M.pt](https://1drv.ms/u/s!AqeByhGUtINrgcpke6_lRSZEKD5j2Q?e=A3FpOf)  
+> 2. Move the file into `models/beats/BEATs_iter3_plus_AS2M.pt`  
+
 ```bash
 python src/training/train_beats_model.py --epochs 50
 ```

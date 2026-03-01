@@ -146,16 +146,37 @@ python src/utils/export_to_tflite.py --quantize --all
 
 ---
 
-## 🛠 Model Architecture
+## 🛠 Models Included in this Codebase
 
-- **Base Backbones**: YAMNet, VGGish, ResNet50, EfficientNet, BEATs
+Your forensic audio pipeline is equipped with **9 different AI architectures**:
+
+### 1. Fast & Efficient Extractors (Transfer Learning)
+- **YAMNet** (`models/yamnet/`): Google's lightweight model. Fast, perfect for general audio classification. *(Default)*
+- **VGGish** (`models/vggish/`): Google's older but highly reliable AudioSet model. Excellent secondary voter.
+
+### 2. The Heavyweights (State-of-the-Art)
+- **Microsoft BEATs** (`models/beats/`): Uses an Acoustic Tokenizer to deeply understand raw audio waveforms.
+  > ⚠️ **IMPORTANT**: You must manually download the pretrained checkpoint:
+  > 1. Download [BEATs_iter3_plus_AS2M.pt](https://1drv.ms/u/s!AqeByhGUtINrgcpke6_lRSZEKD5j2Q?e=A3FpOf)
+  > 2. Place it in `models/beats/BEATs_iter3_plus_AS2M.pt`
+- **Vision Transformers** (`models/spectrogram/`): Converts audio to Mel-Spectrograms and uses powerful image-recognition models (**ResNet50** or **EfficientNet**) to visually classify sounds.
+
+### 3. Specialized Custom Models
+- **Bidirectional LSTM**: An optional sequence-learning layer (`--lstm`) to understand the progression of time in sounds.
+- **Knowledge Distillation Student** (`models/student/`): A hyper-compressed, tiny neural network that trains itself to perfectly copy the combined intelligence of the massive models above.
+- **KerasTuner Best Model** (`models/tuned/`): An automatically-discovered optimal neural network architecture based on overnight algorithmic searching.
+
+### 4. Advanced Analysis Tools
+- **DEMUCS**: Meta's Audio Source Separation model. Literally splits an audio file apart into individual stems (vocals, drums, other). Great for isolating whispers or gunshots under loud music.
+- **IsolationForest**: A purely mathematical Anomaly Detection model. Flags sounds that fundamentally do not match the acoustic fingerprint of your training dataset (Zero-Shot Detection).
+
+---
+
+## 🏗 Additional Architecture Details
 - **Advanced Augmentation**: Multi-SNR Noise Mixing, MixUp, SpecAugment Frequency Masking
 - **Loss Functions**: Binary Crossentropy + optional Supervised Contrastive Loss
-- **LSTM Variant**: Bidirectional LSTM for temporal sequence learning
-- **Feature Extraction**: Global Average + Max Pooling
 - **Core Network**: Shared Dense + BatchNorm + Dropout → Dual-Head output
 - **Ensemble Mode**: Multi-model voting system for near-zero false positives
-- **Anomaly Detection**: IsolationForest-based Zero-Shot unknown sound detection
 - **Edge Deployment**: TFLite export with INT8 quantization
 
 All model `.keras` files, labels, and training histories are saved in organized `models/<backbone>/` subdirectories.
