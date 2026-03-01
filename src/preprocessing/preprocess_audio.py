@@ -210,6 +210,10 @@ def load_and_preprocess_audio(file_path: Path) -> np.ndarray:
         
         if np.max(np.abs(audio)) > 0:
             audio = audio / np.max(np.abs(audio))
+            
+        # --- AUTOMATED SILENCE REMOVAL ---
+        # Trims leading and trailing silence below 20dB
+        audio, _ = librosa.effects.trim(audio, top_db=20)
         
         target_length = int(TARGET_DURATION * TARGET_SR)
         
