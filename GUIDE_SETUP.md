@@ -6,7 +6,50 @@ This guide walks you through preprocessing your external dataset, training the m
 
 ---
 
-## 🔗 The Full Workflow
+## ⚡ Automated Pipeline (Recommended)
+
+For convenience, use the one-command runner scripts instead of running each step manually:
+
+### One-Command Training
+```bash
+# Quick: Preprocess + YAMNet training
+python run_training_pipeline.py
+
+# Full overnight: Preprocess → YAMNet → VGGish → Spectrogram → BEATs → Student
+python run_training_pipeline.py --full
+
+# Skip preprocessing if already done
+python run_training_pipeline.py --skip_preprocess --full --epochs 80
+```
+
+### One-Command Testing
+```bash
+# Standard test
+python run_testing_suite.py "audio.mp3"
+
+# Full power: ensemble + anomaly + DEMUCS
+python run_testing_suite.py "audio.mp3" --full --demucs
+
+# Test an entire folder
+python run_testing_suite.py "D:\evidence_audio" --full
+```
+
+### One-Command Advanced Tools
+```bash
+# Full nightly optimization: tune → student → evaluate → export
+python run_advanced_tools.py --nightly
+
+# Individual tools
+python run_advanced_tools.py --tune --max_trials 100
+python run_advanced_tools.py --evaluate --export --quantize
+python run_advanced_tools.py --active "D:\unlabeled_audio"
+```
+
+---
+
+## 🔗 Manual Step-by-Step Workflow
+
+*Use these for granular control over individual steps.*
 
 Your data is configured to run from an **External Drive** to save space.
 
@@ -133,6 +176,9 @@ python src/utils/export_to_tflite.py --all --quantize # Export ALL models at onc
 ```text
 training/
 ├── config.py                              # Central config (paths, backbone dirs)
+├── run_training_pipeline.py               # ⚡ One-command training
+├── run_testing_suite.py                   # ⚡ One-command testing
+├── run_advanced_tools.py                  # ⚡ One-command advanced tools
 ├── src/
 │   ├── preprocessing/
 │   │   └── preprocess_audio.py            # Audio preprocessing + SpecAugment
