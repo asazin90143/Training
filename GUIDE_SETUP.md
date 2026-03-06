@@ -62,7 +62,7 @@ Your data is configured to run from an **External Drive** to save space.
 ---
 
 ### Step 1: Preprocess (Scan the Drive)
-Scans `D:\dataset`, validates audio, normalizes, chunks to 5 seconds, and applies **SpecAugment frequency masking**, pitch shifting, and **Multi-SNR Background Noise Mixing** (15%, 30%, 50% volume).
+Scans `D:\dataset`, utilizes **Multi-Core multiprocessing** to rapidly validate audio, normalize, chunk to 5-second increments, and applies pitch shifting and **Multi-SNR Background Noise Mixing** (15%, 30%, 50% volume).
 
 *Pro Tip: Create `D:\dataset\_background_noise\` with custom noise files (wind, crowds, static).*
 

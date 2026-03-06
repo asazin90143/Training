@@ -129,7 +129,7 @@ python run_advanced_tools.py --active "D:\unlabeled_audio"
 ```bash
 python src/preprocessing/preprocess_audio.py
 ```
-Applies: **Automated Silence Removal** (removes dead spaces), pitch shifting, time stretching, **SpecAugment frequency masking**, and **Multi-SNR Background Noise Mixing** (faint 15%, medium 30%, loud 50%).
+Applies: **Multi-Core Processing** for extreme speed, **Automated Silence Removal** (removes dead spaces), pitch shifting, time stretching, and **Multi-SNR Background Noise Mixing** (faint 15%, medium 30%, loud 50%).
 
 ### Step 2: Train the Model
 

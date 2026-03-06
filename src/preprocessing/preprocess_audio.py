@@ -15,6 +15,7 @@ import wave
 import struct
 import random
 import numpy as np
+import concurrent.futures
 from pathlib import Path
 
 # Try to import optional dependencies
@@ -26,7 +27,7 @@ except ImportError:
     LIBROSA_AVAILABLE = False
     print("⚠️ librosa not installed. Run: pip install librosa soundfile")
 
-# Configuration - resolve project root (2 levels up from src/preprocessing/)
+# Configuration - resolve project root
 import sys
 PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
 if PROJECT_ROOT not in sys.path:
@@ -147,67 +148,40 @@ def augment_audio(audio: np.ndarray, sr: int, ambient_noises: list = None) -> li
             except Exception:
                 pass
     
-    # SpecAugment: Frequency Masking
-    try:
-        S = librosa.feature.melspectrogram(y=audio, sr=sr, n_mels=128)
-        S_masked = S.copy()
-        n_mels = S_masked.shape[0]
-        # Mask 1-3 random frequency bands
-        for _ in range(random.randint(1, 3)):
-            f_start = random.randint(0, n_mels - 20)
-            f_width = random.randint(5, 20)
-            S_masked[f_start:f_start + f_width, :] = 0
-        # Reconstruct audio from masked spectrogram
-        masked_audio = librosa.feature.inverse.mel_to_audio(S_masked, sr=sr)
-        if len(masked_audio) > len(audio):
-            masked_audio = masked_audio[:len(audio)]
-        else:
-            masked_audio = np.pad(masked_audio, (0, max(0, len(audio) - len(masked_audio))))
-        masked_audio = masked_audio / (np.max(np.abs(masked_audio)) + 1e-8)
-        augmented.append((masked_audio, "freq_masked"))
-    except Exception:
-        pass
+    # NOTE: SpecAugment (inverting mel-spectrograms back to audio) was removed from here
+    # to significantly speed up preprocessing. Standard stretch/pitching is sufficient.
     
     return augmented[:AUGMENTATION_MULTIPLIER]
 
 
-def validate_audio_quality(file_path: Path) -> tuple:
-    """Check audio file for quality issues."""
+def validate_audio_quality(audio: np.ndarray, sr: int) -> tuple:
+    """Check audio array for quality issues natively (prevents reloading)."""
     issues = []
-    try:
-        audio, sr = librosa.load(str(file_path), sr=TARGET_SR, mono=True)
-        duration = len(audio) / sr
-        
-        if duration < MIN_DURATION_SECONDS:
-            issues.append(f"Too short ({duration:.2f}s)")
-        
-        rms = np.sqrt(np.mean(audio**2))
-        if rms < MIN_RMS_THRESHOLD:
-            issues.append(f"Too quiet (RMS={rms:.4f})")
-        
-        peak = np.max(np.abs(audio))
-        if peak > 0:
-            clipping_samples = np.sum(np.abs(audio) > 0.99 * peak)
-            clipping_ratio = clipping_samples / len(audio)
-            if clipping_ratio > MAX_CLIPPING_RATIO:
-                issues.append(f"Clipping ({clipping_ratio*100:.1f}%)")
-        
-        if np.all(audio == 0):
-            issues.append("All zeros")
-        
-        return len(issues) == 0, issues
-    except Exception as e:
-        return False, [f"Cannot read: {e}"]
-
-
-def load_and_preprocess_audio(file_path: Path) -> np.ndarray:
-    """Load audio file and preprocess to standard format."""
-    if not LIBROSA_AVAILABLE:
-        raise ImportError("librosa is required")
+    duration = len(audio) / sr
     
+    if duration < MIN_DURATION_SECONDS:
+        issues.append(f"Too short ({duration:.2f}s)")
+    
+    rms = np.sqrt(np.mean(audio**2))
+    if rms < MIN_RMS_THRESHOLD:
+        issues.append(f"Too quiet (RMS={rms:.4f})")
+    
+    peak = np.max(np.abs(audio))
+    if peak > 0:
+        clipping_samples = np.sum(np.abs(audio) > 0.99 * peak)
+        clipping_ratio = clipping_samples / len(audio)
+        if clipping_ratio > MAX_CLIPPING_RATIO:
+            issues.append(f"Clipping ({clipping_ratio*100:.1f}%)")
+    
+    if np.all(audio == 0):
+        issues.append("All zeros")
+    
+    return len(issues) == 0, issues
+
+
+def preprocess_audio_array(audio: np.ndarray, sr: int) -> np.ndarray:
+    """Preprocess an already loaded audio array to standard format."""
     try:
-        audio, sr = librosa.load(str(file_path), sr=TARGET_SR, mono=True)
-        
         if np.max(np.abs(audio)) > 0:
             audio = audio / np.max(np.abs(audio))
             
@@ -215,7 +189,7 @@ def load_and_preprocess_audio(file_path: Path) -> np.ndarray:
         # Trims leading and trailing silence below 20dB
         audio, _ = librosa.effects.trim(audio, top_db=20)
         
-        target_length = int(TARGET_DURATION * TARGET_SR)
+        target_length = int(TARGET_DURATION * sr)
         
         if len(audio) < target_length:
             padding = target_length - len(audio)
@@ -246,8 +220,65 @@ def load_and_preprocess_audio(file_path: Path) -> np.ndarray:
         
         return audio
     except Exception as e:
-        print(f"  ❌ Error processing {file_path.name}: {e}")
         return None
+
+
+def process_single_file(args):
+    """Worker function for multiprocessing."""
+    audio_file, proc_dir, main_cls, main_cls_id, sub_cls, sub_cls_full, sub_cls_id, ambient_noises = args
+    
+    try:
+        # 1. LOAD ONCE
+        audio, sr = librosa.load(str(audio_file), sr=TARGET_SR, mono=True)
+    except Exception as e:
+        return {"status": "error", "message": f"Cannot load: {e}"}
+        
+    # 2. VALIDATE IN-MEMORY
+    is_valid, issues = validate_audio_quality(audio, sr)
+    if not is_valid:
+        return {"status": "skipped"}
+        
+    # 3. PREPROCESS IN-MEMORY
+    audio = preprocess_audio_array(audio, sr)
+    if audio is None:
+        return {"status": "error", "message": "Preprocess failed"}
+        
+    new_samples = []
+    
+    # 4. SAVE ORIGINAL
+    output_path = proc_dir / f"{audio_file.stem}_processed.wav"
+    sf.write(str(output_path), audio, sr)
+    
+    new_samples.append({
+        "file": str(output_path),
+        "main_class": main_cls,
+        "main_class_id": main_cls_id,
+        "sub_class": sub_cls,
+        "sub_class_full": sub_cls_full,
+        "sub_class_id": sub_cls_id,
+        "duration": TARGET_DURATION,
+        "augmented": False
+    })
+    
+    # 5. AUGMENT & SAVE
+    if AUGMENTATION_ENABLED:
+        bg = ambient_noises if main_cls != "environment" else []
+        augmented_versions = augment_audio(audio, sr, bg)
+        for aug_audio, aug_suffix in augmented_versions:
+            aug_path = proc_dir / f"{audio_file.stem}_{aug_suffix}.wav"
+            sf.write(str(aug_path), aug_audio, sr)
+            new_samples.append({
+                "file": str(aug_path),
+                "main_class": main_cls,
+                "main_class_id": main_cls_id,
+                "sub_class": sub_cls,
+                "sub_class_full": sub_cls_full,
+                "sub_class_id": sub_cls_id,
+                "duration": TARGET_DURATION,
+                "augmented": True
+            })
+            
+    return {"status": "success", "samples": new_samples, "sub_cls_full": sub_cls_full}
 
 
 def process_dataset():
@@ -280,7 +311,6 @@ def process_dataset():
     print("\n  🎵 Pre-loading background noises for mixing...")
     ambient_noises = []
     
-    # Source 1: Environment folder (existing dataset)
     env_dir = DATASET_DIR / "environment"
     if env_dir.exists():
         for sub_dir in env_dir.iterdir():
@@ -294,7 +324,6 @@ def process_dataset():
                 except:
                     pass
     
-    # Source 2: Dedicated background noise folder (optional, for realism)
     bg_noise_dir = DATASET_DIR / "_background_noise"
     if bg_noise_dir.exists():
         print("    📂 Found _background_noise folder, loading extras...")
@@ -311,16 +340,14 @@ def process_dataset():
         ambient_noises = ambient_noises[:300]
     print(f"    ✅ Loaded {len(ambient_noises)} background tracks")
     
-    # Create processed directory
     print(f"\n  💾 Processed data will be saved to: {PROCESSED_DIR}")
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     
-    total_processed = 0
-    total_skipped = 0
+    # Build a flat list of tasks for the multiprocessing pool
+    tasks = []
     
     for main_cls in main_classes:
         main_cls_id = main_classes.index(main_cls)
-        
         for sub_cls in hierarchy[main_cls]:
             sub_cls_full = f"{main_cls}/{sub_cls}"
             sub_cls_id = sub_classes.index(sub_cls_full)
@@ -331,71 +358,51 @@ def process_dataset():
             
             audio_files = list(src_dir.glob("*.wav")) + list(src_dir.glob("*.mp3")) + list(src_dir.glob("*.ogg"))
             
-            if len(audio_files) == 0:
-                continue
-            
-            print(f"\n  📂 [{main_cls}] {sub_cls}: {len(audio_files)} files")
-            
-            processed_count = 0
-            skipped_count = 0
-            
-            for audio_file in audio_files:
-                is_valid, issues = validate_audio_quality(audio_file)
-                if not is_valid:
-                    skipped_count += 1
-                    continue
-                
-                audio = load_and_preprocess_audio(audio_file)
-                
-                if audio is not None:
-                    # Save original
-                    output_path = proc_dir / f"{audio_file.stem}_processed.wav"
-                    sf.write(str(output_path), audio, TARGET_SR)
-                    
-                    # Store ABSOLUTE path so training script can find it on external drive
-                    manifest["samples"].append({
-                        "file": str(output_path),
-                        "main_class": main_cls,
-                        "main_class_id": main_cls_id,
-                        "sub_class": sub_cls,
-                        "sub_class_full": sub_cls_full,
-                        "sub_class_id": sub_cls_id,
-                        "duration": TARGET_DURATION,
-                        "augmented": False
-                    })
-                    processed_count += 1
-                    
-                    # Augment
-                    if AUGMENTATION_ENABLED:
-                        bg = ambient_noises if main_cls != "environment" else []
-                        augmented_versions = augment_audio(audio, TARGET_SR, bg)
-                        for aug_audio, aug_suffix in augmented_versions:
-                            aug_path = proc_dir / f"{audio_file.stem}_{aug_suffix}.wav"
-                            sf.write(str(aug_path), aug_audio, TARGET_SR)
-                            
-                            manifest["samples"].append({
-                                "file": str(aug_path),
-                                "main_class": main_cls,
-                                "main_class_id": main_cls_id,
-                                "sub_class": sub_cls,
-                                "sub_class_full": sub_cls_full,
-                                "sub_class_id": sub_cls_id,
-                                "duration": TARGET_DURATION,
-                                "augmented": True
-                            })
-                            processed_count += 1
-            
-            manifest["statistics"][sub_cls_full] = processed_count
-            total_processed += processed_count
-            total_skipped += skipped_count
-            
-            if skipped_count > 0:
-                print(f"    ✅ Processed: {processed_count} | ⚠️ Skipped: {skipped_count}")
-            else:
-                print(f"    ✅ Processed: {processed_count} (incl. augmented)")
+            for f in audio_files:
+                tasks.append((f, proc_dir, main_cls, main_cls_id, sub_cls, sub_cls_full, sub_cls_id, ambient_noises))
     
+    if not tasks:
+        return manifest
+        
+    num_workers = os.cpu_count() or 4
+    print(f"\n🚀 Starting Multi-Processing Fast-Pass (Workers: {num_workers})")
+    print(f"   Processing {len(tasks)} files...")
+    
+    total_processed = 0
+    total_skipped = 0
+    total_errors = 0
+    completed = 0
+    
+    # Execute mapping in parallel
+    with concurrent.futures.ProcessPoolExecutor(max_workers=num_workers) as executor:
+        futures = {executor.submit(process_single_file, t): t for t in tasks}
+        
+        for future in concurrent.futures.as_completed(futures):
+            completed += 1
+            if completed % 100 == 0 or completed == len(tasks):
+                print(f"   ► [{completed}/{len(tasks)}] audio tasks complete...")
+                
+            try:
+                result = future.result()
+                if result is None: continue
+                
+                status = result.get("status")
+                if status == "success":
+                    new_samples = result.get("samples", [])
+                    total_processed += len(new_samples)
+                    manifest["samples"].extend(new_samples)
+                    
+                    sub_cls_full = result.get("sub_cls_full")
+                    manifest["statistics"][sub_cls_full] = manifest["statistics"].get(sub_cls_full, 0) + len(new_samples)
+                elif status == "skipped":
+                    total_skipped += 1
+                elif status == "error":
+                    total_errors += 1
+            except Exception as e:
+                total_errors += 1
+                
     print(f"\n{'='*50}")
-    print(f"📊 TOTAL: {total_processed} processed, {total_skipped} skipped")
+    print(f"📊 TOTAL: {total_processed} items added (incl. augments) | {total_skipped} skipped | {total_errors} errors")
     
     return manifest
 
@@ -472,7 +479,7 @@ def check_dataset_status():
 
 def main():
     print("="*50)
-    print("🎵 HIERARCHICAL AUDIO PREPROCESSING TOOL")
+    print("🎵 HIERARCHICAL AUDIO PREPROCESSING TOOL (MULTI-CORE)")
     print("="*50)
     print(f"  Dataset:   {DATASET_DIR}")
     print(f"  Processed: {PROCESSED_DIR}")
