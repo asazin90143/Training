@@ -35,6 +35,9 @@ pip install demucs             # Audio source separation
 ```text
 training/
 ├── config.py                              # Central configuration (paths, backbone dirs)
+├── run_training_pipeline.py               # ⚡ One-command training (preprocess + train)
+├── run_testing_suite.py                   # ⚡ One-command testing (ensemble + anomaly)
+├── run_advanced_tools.py                  # ⚡ One-command advanced tools (nightly)
 ├── requirements.txt                       # Python dependencies
 ├── README.md
 ├── GUIDE_SETUP.md
@@ -77,7 +80,50 @@ training/
 
 ---
 
-## 🚀 The Training Pipeline
+## ⚡ Automated Pipeline (One-Command)
+
+These runner scripts combine multiple steps into a single command. Use these for convenience — or scroll down to the **Manual Step-by-Step** section for granular control.
+
+### Training (Preprocess + Train)
+```bash
+# Quick: Preprocess + YAMNet training
+python run_training_pipeline.py
+
+# Full overnight: Preprocess → YAMNet → VGGish → Spectrogram → BEATs → Student
+python run_training_pipeline.py --full
+
+# Skip preprocessing (already done), train all models, 80 epochs
+python run_training_pipeline.py --skip_preprocess --full --epochs 80
+```
+
+### Testing (Ensemble + Anomaly)
+```bash
+# Standard test on a single file
+python run_testing_suite.py "audio.mp3"
+
+# Full power: ensemble + anomaly + DEMUCS separation
+python run_testing_suite.py "audio.mp3" --full --demucs
+
+# Test all audio files in a directory
+python run_testing_suite.py "D:\evidence_audio" --full
+```
+
+### Advanced Tools (Nightly Optimization)
+```bash
+# Full nightly: tune → student → evaluate → export
+python run_advanced_tools.py --nightly
+
+# Individual tools
+python run_advanced_tools.py --tune --max_trials 100
+python run_advanced_tools.py --evaluate --export --quantize
+python run_advanced_tools.py --active "D:\unlabeled_audio"
+```
+
+---
+
+## 🚀 Manual Step-by-Step Pipeline
+
+*Use these if you want granular control over each individual step.*
 
 ### Step 1: Preprocess Audio
 ```bash
