@@ -44,7 +44,8 @@ from train_forensic_model import HierarchicalDataset, BACKBONE_CONFIG
 
 def load_teacher_models():
     """Load all trained models as the Teacher ensemble."""
-    models = list(MODELS_DIR.glob("*.keras"))
+    # Search all subdirectories for models
+    models = list(PATHS["models_root"].rglob("*.keras"))
     teachers = []
     for m_path in models:
         try:
