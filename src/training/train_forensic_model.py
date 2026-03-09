@@ -327,6 +327,13 @@ class YAMNetLayer(tf.keras.layers.Layer):
         self.yamnet_url = yamnet_url
         self.hub_layer = hub.KerasLayer(yamnet_url, trainable=trainable)
     
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "yamnet_url": self.yamnet_url,
+        })
+        return config
+    
     def call(self, inputs):
         # hub.KerasLayer for YAMNet returns (scores, embeddings, spectrogram)
         scores, embeddings, spectrogram = self.hub_layer(inputs)
@@ -417,6 +424,11 @@ def train_model(args):
     # 1. Load Feature Extractor
     backbone = args.backbone
     bb_cfg = BACKBONE_CONFIG[backbone]
+    
+    bb_paths = get_paths(backbone)
+    bb_models_dir = bb_paths["models"]
+    checkpoint_path = bb_models_dir / "latest_checkpoint.keras"
+    
     print(f"\n📦 Loading {backbone.upper()} backbone...")
     feature_model = hub.load(bb_cfg["url"])
     print(f"✅ {backbone.upper()} loaded (embedding size: {bb_cfg['embedding_size']})")
@@ -425,36 +437,43 @@ def train_model(args):
     dataset = HierarchicalDataset(MANIFEST_PATH, feature_model, backbone=backbone)
     (X_train, y_train), (X_test, y_test) = dataset.prepare_data()
     
-    # 3. Build Model
+    # 3. Build or Load Model
     emb_size = bb_cfg["embedding_size"]
-    if args.finetune:
-        print("\n🔨 Building FINE-TUNE model (YAMNet trainable)...")
-        model = create_finetune_model(
-            len(dataset.main_classes),
-            len(dataset.sub_classes)
-        )
-    else:
-        print("\n🔨 Building dual-head model...")
-        model = create_hierarchical_model(
-            len(dataset.main_classes),
-            len(dataset.sub_classes),
-            embedding_size=emb_size
-        )
     
-    # 4. Compile
-    lr = FINETUNE_LEARNING_RATE if args.finetune else args.learning_rate
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
-        loss={
-            "main_output": "binary_crossentropy", 
-            "sub_output": "binary_crossentropy"
-        },
-        loss_weights={
-            "main_output": 0.5,
-            "sub_output": 1.0
-        },
-        metrics={"main_output": "binary_accuracy", "sub_output": "binary_accuracy"}
-    )
+    if checkpoint_path.exists():
+        print(f"\n🔄 Resuming from previously interrupted checkpoint: {checkpoint_path}")
+        custom_objs = {"YAMNetLayer": YAMNetLayer, "KerasLayer": hub.KerasLayer}
+        model = tf.keras.models.load_model(str(checkpoint_path), custom_objects=custom_objs)
+    else:
+        if args.finetune:
+            print("\n🔨 Building FINE-TUNE model (YAMNet trainable)...")
+            model = create_finetune_model(
+                len(dataset.main_classes),
+                len(dataset.sub_classes)
+            )
+        else:
+            print("\n🔨 Building dual-head model...")
+            model = create_hierarchical_model(
+                len(dataset.main_classes),
+                len(dataset.sub_classes),
+                embedding_size=emb_size
+            )
+        
+        # 4. Compile (Only needed if building from scratch)
+        lr = FINETUNE_LEARNING_RATE if args.finetune else args.learning_rate
+        model.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+            loss={
+                "main_output": "binary_crossentropy", 
+                "sub_output": "binary_crossentropy"
+            },
+            loss_weights={
+                "main_output": 0.5,
+                "sub_output": 1.0
+            },
+            metrics={"main_output": "binary_accuracy", "sub_output": "binary_accuracy"}
+        )
+
     
     model.summary()
     
@@ -471,6 +490,13 @@ def train_model(args):
             patience=5,   # Increased from 4
             factor=0.3,   # Harder drop when stuck (was 0.5)
             min_lr=1e-7   # Lower minimum (was 1e-6)
+        ),
+        tf.keras.callbacks.ModelCheckpoint(
+            filepath=str(checkpoint_path),
+            monitor='val_loss',
+            save_best_only=False,  # Save every epoch to recover from crashes
+            save_weights_only=False,
+            verbose=1
         )
     ]
     
@@ -482,27 +508,35 @@ def train_model(args):
         callbacks=callbacks
     )
     
-    # 6. Save
+    # 6. Save Final Model
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    name = f"hierarchical_model_{timestamp}"
-    MODELS_DIR.mkdir(exist_ok=True)
+    name = f"{backbone}_classifier_{timestamp}"
+    bb_models_dir.mkdir(exist_ok=True, parents=True)
     
-    save_path = MODELS_DIR / f"{name}.keras"
+    save_path = bb_models_dir / f"{name}.keras"
     model.save(str(save_path))
-    print(f"\n💾 Model saved to: {save_path}")
+    print(f"\n💾 Final Model saved to: {save_path}")
+    
+    # Clean up the temporary checkpoint since we finished successfully
+    if checkpoint_path.exists():
+        try:
+            checkpoint_path.unlink()
+            print(f"🧹 Cleaned up temporary checkpoint.")
+        except Exception:
+            pass
     
     # Save labels
     labels = {
         "main_classes": dataset.main_classes,
         "sub_classes": dataset.sub_classes
     }
-    labels_path = MODELS_DIR / f"{name}_labels.json"
+    labels_path = bb_models_dir / f"{name}_labels.json"
     with open(labels_path, "w") as f:
         json.dump(labels, f, indent=2)
     print(f"📋 Labels saved to: {labels_path}")
     
     # Save training history
-    history_path = MODELS_DIR / f"{name}_history.json"
+    history_path = bb_models_dir / f"{name}_history.json"
     with open(history_path, "w") as f:
         hist_dict = {}
         for k, v in history.history.items():
