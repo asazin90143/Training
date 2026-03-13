@@ -62,13 +62,22 @@ def generate_soft_targets(teachers, X_data, temperature=3.0):
     all_main_preds = []
     all_sub_preds = []
     
-    for teacher in teachers:
-        preds = teacher.predict(X_data, verbose=0)
-        # Apply temperature scaling for softer probabilities
-        main_soft = tf.nn.sigmoid(tf.math.log(preds[0] / (1 - preds[0] + 1e-8)) / temperature).numpy()
-        sub_soft = tf.nn.sigmoid(tf.math.log(preds[1] / (1 - preds[1] + 1e-8)) / temperature).numpy()
-        all_main_preds.append(main_soft)
-        all_sub_preds.append(sub_soft)
+    valid_count = 0
+    for i, teacher in enumerate(teachers):
+        try:
+            preds = teacher.predict(X_data, verbose=0)
+            # Apply temperature scaling for softer probabilities
+            main_soft = tf.nn.sigmoid(tf.math.log(preds[0] / (1 - preds[0] + 1e-8)) / temperature).numpy()
+            sub_soft = tf.nn.sigmoid(tf.math.log(preds[1] / (1 - preds[1] + 1e-8)) / temperature).numpy()
+            all_main_preds.append(main_soft)
+            all_sub_preds.append(sub_soft)
+            valid_count += 1
+        except ValueError as e:
+            print(f"   ⚠️ Skipping incompatible Teacher #{i+1} (Mismatching Architecture or Embedding Size)")
+            continue
+            
+    if valid_count == 0:
+        raise ValueError("No compatible teachers matching the YAMNet embedding standard were found!")
     
     # Average across all teachers
     avg_main = np.mean(all_main_preds, axis=0)
