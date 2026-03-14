@@ -24,14 +24,15 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import librosa
 
-import sys
 PROJECT_ROOT = str(Path(__file__).parent.parent.parent)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
+
 # Also add own directory for sibling imports
 OWN_DIR = str(Path(__file__).parent)
 if OWN_DIR not in sys.path:
     sys.path.insert(0, OWN_DIR)
+
 from config import get_paths
 PATHS = get_paths("student")
 
@@ -62,24 +63,44 @@ def generate_soft_targets(teachers, X_data, temperature=3.0):
     all_main_preds = []
     all_sub_preds = []
     
+    expected_main_shape = None
+    expected_sub_shape = None
+    
     valid_count = 0
     for i, teacher in enumerate(teachers):
         try:
             preds = teacher.predict(X_data, verbose=0)
+            
+            # Check if predictions are a list/tuple of 2 arrays (main and sub)
+            if not isinstance(preds, (list, tuple)) or len(preds) != 2:
+                print(f"   ⚠️ Skipping incompatible Teacher #{i+1} (Unexpected output format)")
+                continue
+
             # Apply temperature scaling for softer probabilities
             main_soft = tf.nn.sigmoid(tf.math.log(preds[0] / (1 - preds[0] + 1e-8)) / temperature).numpy()
             sub_soft = tf.nn.sigmoid(tf.math.log(preds[1] / (1 - preds[1] + 1e-8)) / temperature).numpy()
+            
+            # Verify shapes to prevent np.mean failure later
+            if expected_main_shape is None:
+                # Set the baseline shape using the first valid teacher
+                expected_main_shape = main_soft.shape
+                expected_sub_shape = sub_soft.shape
+            elif main_soft.shape != expected_main_shape or sub_soft.shape != expected_sub_shape:
+                print(f"   ⚠️ Skipping incompatible Teacher #{i+1} (Shape mismatch: expected {expected_main_shape}, got {main_soft.shape})")
+                continue
+                
             all_main_preds.append(main_soft)
             all_sub_preds.append(sub_soft)
             valid_count += 1
-        except ValueError as e:
-            print(f"   ⚠️ Skipping incompatible Teacher #{i+1} (Mismatching Architecture or Embedding Size)")
+            
+        except Exception as e: # Catching all exceptions prevents unexpected crashes from bad models
+            print(f"   ⚠️ Skipping incompatible Teacher #{i+1} (Error during prediction: {e})")
             continue
             
     if valid_count == 0:
         raise ValueError("No compatible teachers matching the YAMNet embedding standard were found!")
     
-    # Average across all teachers
+    # Average across all valid teachers
     avg_main = np.mean(all_main_preds, axis=0)
     avg_sub = np.mean(all_sub_preds, axis=0)
     
@@ -167,8 +188,9 @@ def main():
         json.dump({"main_classes": dataset.main_classes, "sub_classes": dataset.sub_classes}, f, indent=2)
     
     print(f"\n✅ Student model saved: {name}.keras")
-    print(f"💡 This tiny model has absorbed the knowledge of {len(teachers)} teachers!")
-
+    print(f"💡 This tiny model has absorbed the knowledge of {valid_count} teachers!") # Updated to reflect valid teachers
 
 if __name__ == "__main__":
+    main()
+    
     main()
