@@ -93,7 +93,7 @@ def generate_soft_targets(teachers, X_data, temperature=3.0):
             all_sub_preds.append(sub_soft)
             valid_count += 1
             
-        except Exception as e: # Catching all exceptions prevents unexpected crashes from bad models
+        except Exception as e:
             print(f"   ⚠️ Skipping incompatible Teacher #{i+1} (Error during prediction: {e})")
             continue
             
@@ -104,7 +104,8 @@ def generate_soft_targets(teachers, X_data, temperature=3.0):
     avg_main = np.mean(all_main_preds, axis=0)
     avg_sub = np.mean(all_sub_preds, axis=0)
     
-    return avg_main, avg_sub
+    # Return the valid_count so the main function can use it
+    return avg_main, avg_sub, valid_count
 
 
 def create_student_model(num_main, num_sub, embedding_size=1024):
@@ -141,7 +142,7 @@ def main():
     if len(teachers) < 1:
         print("❌ No teacher models found. Train at least one model first.")
         return
-    print(f"   Total teachers: {len(teachers)}")
+    print(f"   Total teachers found: {len(teachers)}")
     
     # 2. Load Data
     bb_cfg = BACKBONE_CONFIG["yamnet"]
@@ -153,7 +154,9 @@ def main():
     
     # 3. Generate soft targets from teachers
     print(f"\n🌡️ Generating soft targets (temperature={args.temperature})...")
-    soft_main_train, soft_sub_train = generate_soft_targets(teachers, X_train, args.temperature)
+    
+    # Unpack the 3 returned variables (including valid_teacher_count)
+    soft_main_train, soft_sub_train, valid_teacher_count = generate_soft_targets(teachers, X_train, args.temperature)
     
     y_train_soft = {"main_output": soft_main_train, "sub_output": soft_sub_train}
     
@@ -188,9 +191,8 @@ def main():
         json.dump({"main_classes": dataset.main_classes, "sub_classes": dataset.sub_classes}, f, indent=2)
     
     print(f"\n✅ Student model saved: {name}.keras")
-    print(f"💡 This tiny model has absorbed the knowledge of {valid_count} teachers!") # Updated to reflect valid teachers
+    print(f"💡 This tiny model has absorbed the knowledge of {valid_teacher_count} teachers!")
+
 
 if __name__ == "__main__":
-    main()
-    
     main()
