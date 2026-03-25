@@ -51,7 +51,8 @@ training/
 │
 ├── src/
 │   ├── preprocessing/
-│   │   └── preprocess_audio.py            # Audio preprocessing + SpecAugment
+│   │   ├── preprocess_audio.py            # Audio preprocessing + SpecAugment
+│   │   └── preprocess_separation_data.py  # 🔀 Separation dataset preprocessor (standalone)
 │   │
 │   ├── training/
 │   │   ├── train_forensic_model.py        # Core training (YAMNet/VGGish, --all_models)
@@ -59,7 +60,8 @@ training/
 │   │   ├── train_beats_model.py           # BEATs backbone
 │   │   ├── train_student_model.py         # Knowledge Distillation
 │   │   ├── train_kfold.py                 # K-Fold Cross Validation
-│   │   └── tune_hyperparameters.py        # KerasTuner auto-optimization
+│   │   ├── tune_hyperparameters.py        # KerasTuner auto-optimization
+│   │   └── train_separation_model.py      # 🔀 DANN/GRL + SepFormer + Distillation
 │   │
 │   ├── testing/
 │   │   └── test_model.py                  # Multi-Resolution + Ensemble + Anomaly

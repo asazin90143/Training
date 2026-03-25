@@ -217,6 +217,19 @@ python download_separation_datasets.py --only musan
 python download_separation_datasets.py --dest "E:\data"
 ```
 
+### Separation Model Training (Phase 2-3)
+Train separation models with DANN/GRL, BEATs integration, and Knowledge Distillation.
+Requires: `pip install pyannote.audio speechbrain pytorch-lightning`
+```bash
+# Run all training phases
+python src/training/train_separation_model.py --all
+
+# Run specific phase
+python src/training/train_separation_model.py --phase train_sepformer --epochs 30
+python src/training/train_separation_model.py --phase distill_student
+python src/training/train_separation_model.py --phase integrate_beats
+```
+
 ---
 
 ## 📁 Project Architecture
@@ -229,13 +242,15 @@ training/
 ├── run_advanced_tools.py                  # ⚡ One-command advanced tools
 ├── src/
 │   ├── preprocessing/
-│   │   └── preprocess_audio.py            # Audio preprocessing + SpecAugment
+│   │   ├── preprocess_audio.py            # Audio preprocessing + SpecAugment
+│   │   └── preprocess_separation_data.py  # 🔀 Separation preprocessor (standalone)
 │   ├── training/
 │   │   ├── train_forensic_model.py        # Core training (--all_models)
 │   │   ├── train_spectrogram_model.py     # Vision ViT
 │   │   ├── train_beats_model.py           # BEATs
 │   │   ├── train_student_model.py         # Knowledge Distillation
-│   │   └── tune_hyperparameters.py        # KerasTuner
+│   │   ├── tune_hyperparameters.py        # KerasTuner
+│   │   └── train_separation_model.py      # 🔀 DANN/GRL + SepFormer + Distillation
 │   ├── testing/
 │   │   └── test_model.py                  # Ensemble + Anomaly Detection
 │   ├── analysis/
@@ -254,6 +269,7 @@ training/
 │   ├── beats/                             # BEATs-trained models
 │   ├── student/                           # Distilled student models
 │   └── tuned/                             # KerasTuner best models
+│   └── separation/                        # 🎙️ Diarization + separation models
 ```
 
 ---

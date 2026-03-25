@@ -7,11 +7,11 @@ It will NEVER touch your existing D:\\dataset or D:\\processed data.
 
 Usage:
     python src/preprocessing/preprocess_separation_data.py
-    python src/preprocessing/preprocess_separation_data.py --source "E:\separation_dataset"
-    python src/preprocessing/preprocess_separation_data.py --dest "E:\separation_processed"
+    python src/preprocessing/preprocess_separation_data.py --source "E:\\separation_dataset"
+    python src/preprocessing/preprocess_separation_data.py --dest "E:\\separation_processed"
 
-Input:  D:\separation_dataset  (downloaded by download_separation_datasets.py)
-Output: D:\separation_processed
+Input:  D:\\separation_dataset  (downloaded by download_separation_datasets.py)
+Output: D:\\separation_processed
 """
 
 import os
