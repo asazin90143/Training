@@ -17,3 +17,6 @@ scikit-learn>=1.2.0
 
 # Visualization (optional, for training graphs)
 matplotlib>=3.6.0
+
+# Speaker Diarization & Voice Separation (optional)
+# pip install pyannote.audio speechbrain torchaudio

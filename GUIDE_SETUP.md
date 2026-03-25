@@ -43,6 +43,10 @@ python run_advanced_tools.py --nightly
 python run_advanced_tools.py --tune --max_trials 100
 python run_advanced_tools.py --evaluate --export --quantize
 python run_advanced_tools.py --active "D:\unlabeled_audio"
+
+# Speaker diarization + voice separation
+python run_advanced_tools.py --diarize "audio.wav"
+python run_advanced_tools.py --diarize "audio.wav" --max_speakers 3
 ```
 
 ---
@@ -58,6 +62,11 @@ Your data is configured to run from an **External Drive** to save space.
 - **Processed Data:** `D:\processed`
 - **Models:** Saved locally in `models/<backbone>/` subdirectories.
 - **Manifest:** Saved locally as `data_manifest.json`.
+
+**Separation Pipeline (completely separate from classification):**
+- **Raw Separation Data:** `D:\separation_dataset`
+- **Processed Separation Data:** `D:\separation_processed`
+- **Download script:** `download_separation_datasets.py` (downloads 7 datasets automatically)
 
 ---
 
@@ -169,6 +178,45 @@ python src/utils/export_to_tflite.py --int8           # Full INT8 (smallest)
 python src/utils/export_to_tflite.py --all --quantize # Export ALL models at once
 ```
 
+### Speaker Diarization & Voice Separation
+Detects how many speakers are in an audio file, generates a millisecond-accurate timeline, and isolates each speaker's voice into separate `.wav` files.
+
+Requires: `pip install pyannote.audio speechbrain torchaudio`
+
+```bash
+# Full pipeline: detect speakers + isolate voices
+python src/analysis/speaker_diarization.py "audio.wav"
+
+# Save output to a custom folder
+python src/analysis/speaker_diarization.py "audio.wav" --output_dir "./separated"
+
+# Limit to max 3 speakers
+python src/analysis/speaker_diarization.py "audio.wav" --max_speakers 3
+
+# Diarization only (skip voice separation)
+python src/analysis/speaker_diarization.py "audio.wav" --no_separate
+
+# Use GPU for faster processing
+python src/analysis/speaker_diarization.py "audio.wav" --device cuda
+```
+Outputs: `speaker_N.wav` files, `_diarization.json` report, `_diarization.rttm` file.
+
+### Download Separation Datasets
+Downloads all required datasets for fine-tuning the voice separation models (Phase 0).
+```bash
+# List available datasets
+python download_separation_datasets.py --list
+
+# Download all 7 automated datasets
+python download_separation_datasets.py
+
+# Download a specific dataset
+python download_separation_datasets.py --only musan
+
+# Custom destination
+python download_separation_datasets.py --dest "E:\data"
+```
+
 ---
 
 ## 📁 Project Architecture
@@ -193,10 +241,12 @@ training/
 │   ├── analysis/
 │   │   ├── active_learner.py              # Active Learning
 │   │   ├── evaluate_weaknesses.py         # Hard Negative Mining
-│   │   └── separate_and_analyze.py        # DEMUCS separation
+│   │   ├── separate_and_analyze.py        # DEMUCS separation
+│   │   └── speaker_diarization.py         # 🎙️ Speaker Diarization + Separation
 │   └── utils/
 │       ├── export_to_tflite.py            # TFLite + INT8
 │       └── model_registry.py              # Model versioning
+├── download_separation_datasets.py        # 📥 Separation dataset downloader
 ├── models/
 │   ├── yamnet/                            # YAMNet-trained models
 │   ├── vggish/                            # VGGish-trained models

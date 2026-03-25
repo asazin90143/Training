@@ -11,6 +11,7 @@ Usage:
     python run_advanced_tools.py --evaluate               # Weakness evaluation
     python run_advanced_tools.py --export                 # TFLite export
     python run_advanced_tools.py --active "D:\\unlabeled"  # Active learning
+    python run_advanced_tools.py --diarize "audio.wav"    # Speaker diarization
 
     # Combine tools
     python run_advanced_tools.py --tune --evaluate --export
@@ -68,6 +69,7 @@ Examples:
   python run_advanced_tools.py --tune --max_trials 100    # Just hyperparameter tuning
   python run_advanced_tools.py --evaluate --export        # Evaluate + export
   python run_advanced_tools.py --active "D:\\unlabeled"    # Active learning scan
+  python run_advanced_tools.py --diarize "audio.wav"      # Speaker diarization + separation
         """
     )
     parser.add_argument("--nightly", action="store_true",
@@ -88,6 +90,14 @@ Examples:
                         help="Temperature for knowledge distillation (default: 3.0)")
     parser.add_argument("--quantize", action="store_true",
                         help="Apply quantization when exporting to TFLite")
+    parser.add_argument("--diarize", type=str, default=None, metavar="FILE",
+                        help="Run speaker diarization & voice separation on an audio file")
+    parser.add_argument("--diarize_output", type=str, default=None, metavar="DIR",
+                        help="Output directory for diarization results")
+    parser.add_argument("--max_speakers", type=int, default=None,
+                        help="Max speakers for diarization")
+    parser.add_argument("--no_separate", action="store_true",
+                        help="Diarization only (skip voice separation)")
     args = parser.parse_args()
 
     # --nightly enables all major tools
@@ -98,10 +108,10 @@ Examples:
         args.export = True
 
     # Validate at least one tool is selected
-    any_selected = args.tune or args.evaluate or args.export or args.active or args.student
+    any_selected = args.tune or args.evaluate or args.export or args.active or args.student or args.diarize
     if not any_selected:
         parser.print_help()
-        print("\n❌ Please select at least one tool (--tune, --evaluate, --export, --active, --student, or --nightly)")
+        print("\n❌ Please select at least one tool (--tune, --evaluate, --export, --active, --student, --diarize, or --nightly)")
         return
 
     banner("🛠️ UNIFIED ADVANCED TOOLS RUNNER")
@@ -116,6 +126,8 @@ Examples:
         tools.append("TFLite Export")
     if args.active:
         tools.append(f"Active Learning ({args.active})")
+    if args.diarize:
+        tools.append(f"Speaker Diarization ({args.diarize})")
     print(f"  Tools:    {', '.join(tools)}")
     print(f"  Started:  {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
@@ -153,6 +165,21 @@ Examples:
             args.active
         ])
         results["Active Learning"] = ok
+
+    # ── 6. Speaker Diarization & Separation ─────────────────────────
+    if args.diarize:
+        cmd = [
+            py, str(PROJECT_ROOT / "src" / "analysis" / "speaker_diarization.py"),
+            args.diarize
+        ]
+        if args.diarize_output:
+            cmd.extend(["--output_dir", args.diarize_output])
+        if args.max_speakers:
+            cmd.extend(["--max_speakers", str(args.max_speakers)])
+        if args.no_separate:
+            cmd.append("--no_separate")
+        ok = run_step("Speaker Diarization & Voice Separation", cmd)
+        results["Speaker Diarization"] = ok
 
     # ── 5. TFLite Export ───────────────────────────────────────────
     if args.export:

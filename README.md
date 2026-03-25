@@ -28,6 +28,13 @@ pip install transformers torch # BEATs backbone
 pip install demucs             # Audio source separation
 ```
 
+**Optional (for Speaker Diarization & Voice Separation):**
+```bash
+pip install pyannote.audio     # Speaker diarization (Pyannote 3.1)
+pip install speechbrain        # Voice separation (SepFormer)
+pip install torchaudio         # Audio I/O for PyTorch
+```
+
 ---
 
 ## 📁 Project Architecture
@@ -60,12 +67,15 @@ training/
 │   ├── analysis/
 │   │   ├── active_learner.py              # Active Learning human-in-the-loop
 │   │   ├── evaluate_weaknesses.py         # Hard Negative Mining confusion report
-│   │   └── separate_and_analyze.py        # DEMUCS source separation
+│   │   ├── separate_and_analyze.py        # DEMUCS source separation
+│   │   └── speaker_diarization.py         # 🎙️ Speaker Diarization + Voice Separation
 │   │
 │   └── utils/
 │       ├── export_to_tflite.py            # TFLite conversion + INT8 quantization
 │       ├── model_registry.py              # Model version tracking
 │       └── download_dataset.py            # Dataset downloader
+│
+├── download_separation_datasets.py        # 📥 Separation dataset downloader
 │
 ├── models/                                # Trained models (per-backbone subdirs)
 │   ├── yamnet/
@@ -117,6 +127,11 @@ python run_advanced_tools.py --nightly
 python run_advanced_tools.py --tune --max_trials 100
 python run_advanced_tools.py --evaluate --export --quantize
 python run_advanced_tools.py --active "D:\unlabeled_audio"
+
+# Speaker diarization + voice separation
+python run_advanced_tools.py --diarize "audio.wav"
+python run_advanced_tools.py --diarize "audio.wav" --max_speakers 3
+python run_advanced_tools.py --diarize "audio.wav" --no_separate   # Timeline only
 ```
 
 ---
@@ -190,6 +205,25 @@ python src/analysis/evaluate_weaknesses.py
 python src/utils/export_to_tflite.py --quantize --all
 ```
 
+### Step 5: Speaker Diarization & Voice Separation
+```bash
+# Full pipeline: detect speakers + isolate voices
+python src/analysis/speaker_diarization.py "audio.wav"
+
+# Save output to a custom folder
+python src/analysis/speaker_diarization.py "audio.wav" --output_dir "./separated"
+
+# Limit to max 3 speakers
+python src/analysis/speaker_diarization.py "audio.wav" --max_speakers 3
+
+# Diarization only (no voice separation)
+python src/analysis/speaker_diarization.py "audio.wav" --no_separate
+
+# Use GPU for faster processing
+python src/analysis/speaker_diarization.py "audio.wav" --device cuda
+```
+Outputs: `speaker_N.wav` isolated audio files, `_diarization.json` report, `_diarization.rttm` file.
+
 ---
 
 ## 🛠 Models Included in this Codebase
@@ -215,6 +249,11 @@ Your forensic audio pipeline is equipped with **9 different AI architectures**:
 ### 4. Advanced Analysis Tools
 - **DEMUCS**: Meta's Audio Source Separation model. Literally splits an audio file apart into individual stems (vocals, drums, other). Great for isolating whispers or gunshots under loud music.
 - **IsolationForest**: A purely mathematical Anomaly Detection model. Flags sounds that fundamentally do not match the acoustic fingerprint of your training dataset (Zero-Shot Detection).
+
+### 5. Speaker Diarization & Voice Separation
+- **Pyannote.audio 3.1**: State-of-the-art speaker diarization. Detects how many people are speaking, generates millisecond-accurate timelines.
+- **SpeechBrain SepFormer**: Neural source separation. Isolates each speaker's voice into a clean, individual `.wav` file.
+- **Outputs**: Per-speaker WAV files, JSON timeline reports, RTTM annotation files.
 
 ---
 
