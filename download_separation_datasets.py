@@ -140,19 +140,36 @@ def run_shell(cmd, cwd=None, description="command"):
 
 @register_dataset("librispeech", "Clean speech corpus (1000+ hours)", "~60 GB")
 def download_librispeech(dest_root):
-    """Download LibriSpeech train-clean-100 subset (smallest useful subset)."""
+    """Download LibriSpeech train-clean-100 subset (6.3 GB)."""
     dest = Path(dest_root) / "librispeech"
     dest.mkdir(parents=True, exist_ok=True)
 
-    # Download the train-clean-100 subset (6.3 GB) — the most practical starting point
+    # Check for partial download (train-clean-100 should have ~28,000 files)
+    subset_dir = dest / "LibriSpeech" / "train-clean-100"
+    if subset_dir.exists():
+        file_count = len(list(subset_dir.rglob("*.flac")))
+        if file_count > 25000:
+            print(f"   Skip: LibriSpeech train-clean-100 already present ({file_count} files).")
+            return True
+        else:
+            print(f"   Detect: Partial LibriSpeech found ({file_count} files).")
+            # Rename as a workaround for WinError 5 locks
+            old_path = dest.parent / f"librispeech_old_{int(time.time())}"
+            try:
+                dest.rename(old_path)
+                print(f"   Renamed partial folder to {old_path.name}")
+            except Exception:
+                # If rename also fails, we just try to delete what we can and hope for the best
+                shutil.rmtree(dest, ignore_errors=True)
+            
+            dest.mkdir(parents=True, exist_ok=True)
+
+    # Download the train-clean-100 subset (6.3 GB)
     url = "https://www.openslr.org/resources/12/train-clean-100.tar.gz"
     archive = dest / "train-clean-100.tar.gz"
 
-    if (dest / "LibriSpeech" / "train-clean-100").exists():
-        print("   ⏭️  LibriSpeech train-clean-100 already extracted.")
-        return True
-
-    ok = safe_download(url, archive, "LibriSpeech train-clean-100 (6.3 GB)")
+    print(f"   ℹ️  Downloading LibriSpeech train-clean-100 (~6.3 GB compressed).")
+    ok = safe_download(url, archive, "LibriSpeech train-clean-100")
     if ok:
         ok = extract_archive(archive, dest, remove_after=True)
     return ok
@@ -325,8 +342,8 @@ Examples:
     )
     parser.add_argument("--dest", type=str, default=DEFAULT_DEST,
                         help=f"Destination directory (default: {DEFAULT_DEST})")
-    parser.add_argument("--only", type=str, default=None,
-                        help="Download only this specific dataset")
+    parser.add_argument("--only", type=str, default=None, nargs='+',
+                        help="Download only these specific datasets")
     parser.add_argument("--list", action="store_true",
                         help="List all available datasets and exit")
     args = parser.parse_args()
@@ -344,10 +361,12 @@ Examples:
         return
 
     # Validate --only
-    if args.only and args.only not in DATASET_REGISTRY:
-        print(f"❌ Unknown dataset: '{args.only}'")
-        print(f"   Available: {', '.join(DATASET_REGISTRY.keys())}")
-        return
+    if args.only:
+        for t in args.only:
+            if t not in DATASET_REGISTRY:
+                print(f"❌ Unknown dataset: '{t}'")
+                print(f"   Available: {', '.join(DATASET_REGISTRY.keys())}")
+                return
 
     dest_root = Path(args.dest)
     dest_root.mkdir(parents=True, exist_ok=True)
@@ -361,7 +380,7 @@ Examples:
 
     # Determine which datasets to download
     if args.only:
-        targets = {args.only: DATASET_REGISTRY[args.only]}
+        targets = {t: DATASET_REGISTRY[t] for t in args.only}
     else:
         targets = DATASET_REGISTRY
 

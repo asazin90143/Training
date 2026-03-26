@@ -87,11 +87,16 @@ Create `download_separation_datasets.py` at the project root.
 **Manual Agreement Required (3 datasets):**
 | Dataset | Reason | Source |
 |---------|--------|--------|
-| VoxCeleb 1 | Must agree to terms on website, then paste URL | [VGG VoxCeleb](https://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox1.html) |
+|  1 | Must agree to terms on website, then paste URL | [VGG VoxCeleb](https://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox1.html) |
 | VoxCeleb 2 | Must agree to terms on website, then paste URL | [VGG VoxCeleb2](https://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox2.html) |
 | CHiME-5/6 | CHiME-5 is direct, CHiME-6 needs registration | [chimechallenge.org](https://chimechallenge.github.io/chime6/) |
 
 All datasets saved to a **completely separate directory** (e.g., `D:\separation_dataset\`), fully isolated from the existing classification dataset on `D:\dataset\`.
+
+> [!TIP]
+> **Storage Tip**: With 732 GB free, download the Core forensic subset first (~70 GB):
+> `python download_separation_datasets.py --only musan wham librispeech whamr`
+> This leaves ~660 GB for processing and one large dataset like LibriMix (~200 GB generated) later.
 
 ---
 
