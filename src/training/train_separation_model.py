@@ -229,12 +229,17 @@ def _build_pyannote_protocol(processed_dir):
 
     print(f"   📂 Found {len(wav_files)} processed WAV files for training")
 
+    # Cap files to avoid infinite CPU hang during standard PyTorch Lightning sanity checks
+    MAX_PYANNOTE_FILES = 10000
+    if len(wav_files) > MAX_PYANNOTE_FILES:
+        wav_files = wav_files[:MAX_PYANNOTE_FILES]
+
     # Split 90/10 for train/dev
     split_idx = max(1, int(len(wav_files) * 0.9))
     train_files = wav_files[:split_idx]
     dev_files = wav_files[split_idx:]
 
-    print(f"   📊 Train: {len(train_files)} files | Dev: {len(dev_files)} files")
+    print(f"   📊 Train: {len(train_files)} files | Dev: {len(dev_files)} files (Capped to {MAX_PYANNOTE_FILES})")
 
     def _make_generator(file_list):
         """Yield pyannote-compatible file dicts from a list of wav files."""
