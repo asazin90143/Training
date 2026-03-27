@@ -326,6 +326,7 @@ def finetune_pyannote(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DEFAU
         protocol=protocol,
         duration=5.0,
         batch_size=DEFAULT_BATCH_SIZE,
+        num_workers=0,
     )
 
     model.task = task
