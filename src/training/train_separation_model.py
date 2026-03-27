@@ -715,8 +715,8 @@ def train_student_separator(output_dir, epochs=DEFAULT_EPOCHS):
             encoded = self.encoder(x)
             separated = self.separator(encoded)
             decoded = self.decoder(separated)
-            # Reshape to (batch, input_dim, num_sources)
-            return decoded.view(-1, self.input_dim, self.num_sources)
+            # Reshape to (batch, time, input_dim, num_sources)
+            return decoded.view(x.size(0), -1, self.input_dim, self.num_sources)
 
     # Initialize Student
     student = StudentSeparator(input_dim=256, hidden_dim=128, num_sources=3)
@@ -742,7 +742,7 @@ def train_student_separator(output_dir, epochs=DEFAULT_EPOCHS):
             # Pass raw tensors mimicking feature outputs
             # Matrix dimensions explicitly map to BEATs -> SepFormer geometry
             dummy_inputs = torch.randn(8, 100, 256)
-            dummy_targets = torch.randn(8, 256, 3)
+            dummy_targets = torch.randn(8, 100, 256, 3)
             
             optimizer.zero_grad()
             preds = student(dummy_inputs)
