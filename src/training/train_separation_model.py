@@ -41,6 +41,46 @@ from datetime import datetime
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
+# ─── Compatibility Patches ────────────────────────────────────────────────
+# 1. torchaudio 2.10+ removed list_audio_backends() but SpeechBrain still calls it
+try:
+    import torchaudio
+    if not hasattr(torchaudio, 'list_audio_backends'):
+        torchaudio.list_audio_backends = lambda: ['soundfile']
+except ImportError:
+    pass
+
+# 2. huggingface_hub removed use_auth_token but SpeechBrain still uses it
+try:
+    import huggingface_hub
+    _orig_hf_download = huggingface_hub.hf_hub_download
+    def _patched_hf_download(*args, **kwargs):
+        if 'use_auth_token' in kwargs:
+            kwargs['token'] = kwargs.pop('use_auth_token')
+        return _orig_hf_download(*args, **kwargs)
+    huggingface_hub.hf_hub_download = _patched_hf_download
+except ImportError:
+    pass
+
+# 3. Windows blocks os.symlink for non-admins (WinError 1314), but SpeechBrain requires it.
+#    We monkey-patch os.symlink to fallback to a standard file copy if it fails.
+import sys, os, shutil
+if sys.platform == "win32":
+    _orig_symlink = os.symlink
+    def _safe_symlink(src, dst, target_is_directory=False, **kwargs):
+        try:
+            _orig_symlink(src, dst, target_is_directory=target_is_directory, **kwargs)
+        except OSError as e:
+            if getattr(e, 'winerror', None) == 1314:
+                # Fallback to copy if symlink privilege is not held
+                if os.path.isdir(src):
+                    shutil.copytree(src, dst, dirs_exist_ok=True)
+                else:
+                    shutil.copy2(src, dst)
+            else:
+                raise
+    os.symlink = _safe_symlink
+
 # Resolve project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -275,6 +315,12 @@ def finetune_pyannote(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DEFAU
 
     model.task = task
 
+    # PyAnnote 4.x requires calling setup() to make the model a proper LightningModule
+    try:
+        model.setup(stage="fit")
+    except Exception:
+        pass
+
     # Set up PyTorch Lightning trainer
     trainer = pl.Trainer(
         max_epochs=epochs,
@@ -297,7 +343,8 @@ def finetune_pyannote(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DEFAU
         return True
     except Exception as e:
         print(f"   ❌ PyAnnote fine-tuning failed: {e}")
-        print(f"   💡 This may require labeled .rttm files from Active Learning (Pillar 1-A)")
+        print(f"   💡 Tip: Ensure pytorch-lightning and pyannote.audio versions are compatible")
+        print(f"   💡 Continuing to next phase...")
         return False
 
 
