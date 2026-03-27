@@ -51,13 +51,19 @@ except ImportError:
     pass
 
 # 2. huggingface_hub removed use_auth_token but SpeechBrain still uses it
+#    Also, newer huggingface_hub versions throw Custom Errors on 404 instead of ValueErrors, which breaks SpeechBrain's optional file checks.
 try:
     import huggingface_hub
     _orig_hf_download = huggingface_hub.hf_hub_download
     def _patched_hf_download(*args, **kwargs):
         if 'use_auth_token' in kwargs:
             kwargs['token'] = kwargs.pop('use_auth_token')
-        return _orig_hf_download(*args, **kwargs)
+        try:
+            return _orig_hf_download(*args, **kwargs)
+        except Exception as e:
+            if "404" in str(e) or "Entry Not Found" in str(e):
+                raise ValueError("File not found (converted from 404 to satisfy SpeechBrain)")
+            raise
     huggingface_hub.hf_hub_download = _patched_hf_download
 except ImportError:
     pass
