@@ -163,6 +163,80 @@ def mixup_data(x, y, alpha=0.4):
 
 # ─── Phase 1-B: Fine-tune PyAnnote Segmentation ──────────────────────────
 
+def _build_pyannote_protocol(processed_dir):
+    """
+    Build a proper pyannote.database Protocol from our processed separation data.
+    PyAnnote requires a Protocol object with train()/development() generators
+    that yield file dicts with 'uri', 'audio', and 'annotation' keys.
+    """
+    from pyannote.database import Protocol, registry
+    from pyannote.core import Segment, Timeline, Annotation
+
+    processed_path = Path(processed_dir)
+    wav_files = sorted(processed_path.rglob("*.wav"))
+
+    if not wav_files:
+        raise FileNotFoundError(
+            f"No .wav files found in {processed_path}. "
+            f"Run preprocess_separation_data.py first!"
+        )
+
+    print(f"   📂 Found {len(wav_files)} processed WAV files for training")
+
+    # Split 90/10 for train/dev
+    split_idx = max(1, int(len(wav_files) * 0.9))
+    train_files = wav_files[:split_idx]
+    dev_files = wav_files[split_idx:]
+
+    print(f"   📊 Train: {len(train_files)} files | Dev: {len(dev_files)} files")
+
+    def _make_generator(file_list):
+        """Yield pyannote-compatible file dicts from a list of wav files."""
+        import soundfile as sf
+
+        def generator():
+            for wav_path in file_list:
+                try:
+                    info = sf.info(str(wav_path))
+                    duration = info.duration
+                except Exception:
+                    continue
+
+                # Create a simple VAD annotation: assume the whole chunk is speech
+                # (our preprocessor already trimmed silence)
+                annotation = Annotation(uri=wav_path.stem)
+                annotation[Segment(0.0, duration)] = "speech"
+
+                # 'annotated' marks the valid region of the audio
+                annotated = Timeline([Segment(0.0, duration)], uri=wav_path.stem)
+
+                yield {
+                    "uri": wav_path.stem,
+                    "audio": str(wav_path),
+                    "annotation": annotation,
+                    "annotated": annotated,
+                    "scope": "file",
+                    "duration": duration,
+                    "classes": ["speech"],
+                }
+        return generator
+
+    # Build a custom Protocol class
+    class ForensicSeparationProtocol(Protocol):
+        name = "ForensicSeparation"
+
+        def train_iter(self):
+            yield from _make_generator(train_files)()
+
+        def development_iter(self):
+            yield from _make_generator(dev_files)()
+
+        def test_iter(self):
+            yield from _make_generator(dev_files)()
+
+    return ForensicSeparationProtocol()
+
+
 def finetune_pyannote(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DEFAULT_LR):
     """
     Fine-tune PyAnnote segmentation-3.0 on forensic audio.
@@ -177,6 +251,14 @@ def finetune_pyannote(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DEFAU
     print("  🎯 PHASE: Fine-Tune PyAnnote Segmentation (Pillar 1-B)")
     print(f"{'─' * 60}")
 
+    # Build proper protocol from processed data
+    print("   🔧 Building training protocol from processed data...")
+    try:
+        protocol = _build_pyannote_protocol(processed_dir)
+    except FileNotFoundError as e:
+        print(f"   ❌ {e}")
+        return False
+
     # Load pre-trained segmentation model
     print("   📡 Loading PyAnnote segmentation-3.0...")
     model = Model.from_pretrained(
@@ -184,11 +266,11 @@ def finetune_pyannote(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DEFAU
         use_auth_token=HF_TOKEN
     )
 
-    # Configure Voice Activity Detection task with our custom data
+    # Configure Voice Activity Detection task with our proper protocol
     task = VoiceActivityDetection(
-        protocol="CustomProtocol",
+        protocol=protocol,
         duration=5.0,
-        batch_size=DEFAULT_BATCH_SIZE
+        batch_size=DEFAULT_BATCH_SIZE,
     )
 
     model.task = task
