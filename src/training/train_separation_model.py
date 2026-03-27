@@ -291,7 +291,10 @@ def finetune_pyannote(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DEFAU
     torch = _import_torch()
     from pyannote.audio import Model
     from pyannote.audio.tasks import VoiceActivityDetection
-    import pytorch_lightning as pl
+    try:
+        import lightning.pytorch as pl
+    except ImportError:
+        import pytorch_lightning as pl
 
     print(f"\n{'─' * 60}")
     print("  🎯 PHASE: Fine-Tune PyAnnote Segmentation (Pillar 1-B)")
@@ -619,6 +622,8 @@ def integrate_beats_frontend(output_dir):
 
     if str(beats_dir.parent) not in sys.path:
         sys.path.insert(0, str(beats_dir.parent))
+    if str(beats_dir) not in sys.path:
+        sys.path.insert(0, str(beats_dir))
 
     try:
         from beats.BEATs import BEATs, BEATsConfig

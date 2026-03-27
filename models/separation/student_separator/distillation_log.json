@@ -6,104 +6,104 @@
   "training_log": [
     {
       "epoch": 1,
-      "distill_loss": 0.4824,
+      "distill_loss": 0.4733,
       "time_s": 0.0
     },
     {
       "epoch": 2,
-      "distill_loss": 0.4776,
+      "distill_loss": 0.4636,
       "time_s": 0.0
     },
     {
       "epoch": 3,
-      "distill_loss": 0.4333,
+      "distill_loss": 0.4449,
       "time_s": 0.0
     },
     {
       "epoch": 4,
-      "distill_loss": 0.4196,
+      "distill_loss": 0.4326,
       "time_s": 0.0
     },
     {
       "epoch": 5,
-      "distill_loss": 0.3933,
+      "distill_loss": 0.38,
       "time_s": 0.0
     },
     {
       "epoch": 6,
-      "distill_loss": 0.3701,
+      "distill_loss": 0.3636,
       "time_s": 0.0
     },
     {
       "epoch": 7,
-      "distill_loss": 0.3396,
+      "distill_loss": 0.3329,
       "time_s": 0.0
     },
     {
       "epoch": 8,
-      "distill_loss": 0.3014,
+      "distill_loss": 0.3195,
       "time_s": 0.0
     },
     {
       "epoch": 9,
-      "distill_loss": 0.2918,
+      "distill_loss": 0.3061,
       "time_s": 0.0
     },
     {
       "epoch": 10,
-      "distill_loss": 0.2593,
+      "distill_loss": 0.301,
       "time_s": 0.0
     },
     {
       "epoch": 11,
-      "distill_loss": 0.2708,
+      "distill_loss": 0.2269,
       "time_s": 0.0
     },
     {
       "epoch": 12,
-      "distill_loss": 0.2358,
+      "distill_loss": 0.2234,
       "time_s": 0.0
     },
     {
       "epoch": 13,
-      "distill_loss": 0.1898,
+      "distill_loss": 0.1852,
       "time_s": 0.0
     },
     {
       "epoch": 14,
-      "distill_loss": 0.2009,
+      "distill_loss": 0.1984,
       "time_s": 0.0
     },
     {
       "epoch": 15,
-      "distill_loss": 0.1459,
+      "distill_loss": 0.1845,
       "time_s": 0.0
     },
     {
       "epoch": 16,
-      "distill_loss": 0.1347,
+      "distill_loss": 0.1667,
       "time_s": 0.0
     },
     {
       "epoch": 17,
-      "distill_loss": 0.1501,
+      "distill_loss": 0.111,
       "time_s": 0.0
     },
     {
       "epoch": 18,
-      "distill_loss": 0.1096,
+      "distill_loss": 0.0944,
       "time_s": 0.0
     },
     {
       "epoch": 19,
-      "distill_loss": 0.0947,
+      "distill_loss": 0.096,
       "time_s": 0.0
     },
     {
       "epoch": 20,
-      "distill_loss": 0.0827,
+      "distill_loss": 0.0945,
       "time_s": 0.0
     }
   ],
-  "timestamp": "2026-03-27T08:56:52.178322"
+  "timestamp": "2026-03-27T23:58:56.212917"
 }
