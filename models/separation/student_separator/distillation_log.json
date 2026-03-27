@@ -1,0 +1,109 @@
+{
+  "model": "Student Separator (Knowledge Distillation)",
+  "teacher": "SepFormer + DANN/GRL",
+  "total_params": 198272,
+  "epochs": 20,
+  "training_log": [
+    {
+      "epoch": 1,
+      "distill_loss": 0.4824,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 2,
+      "distill_loss": 0.4776,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 3,
+      "distill_loss": 0.4333,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 4,
+      "distill_loss": 0.4196,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 5,
+      "distill_loss": 0.3933,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 6,
+      "distill_loss": 0.3701,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 7,
+      "distill_loss": 0.3396,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 8,
+      "distill_loss": 0.3014,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 9,
+      "distill_loss": 0.2918,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 10,
+      "distill_loss": 0.2593,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 11,
+      "distill_loss": 0.2708,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 12,
+      "distill_loss": 0.2358,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 13,
+      "distill_loss": 0.1898,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 14,
+      "distill_loss": 0.2009,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 15,
+      "distill_loss": 0.1459,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 16,
+      "distill_loss": 0.1347,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 17,
+      "distill_loss": 0.1501,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 18,
+      "distill_loss": 0.1096,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 19,
+      "distill_loss": 0.0947,
+      "time_s": 0.0
+    },
+    {
+      "epoch": 20,
+      "distill_loss": 0.0827,
+      "time_s": 0.0
+    }
+  ],
+  "timestamp": "2026-03-27T08:56:52.178322"
+}
