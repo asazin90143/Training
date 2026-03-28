@@ -18,6 +18,9 @@ data_manifest.json
 
 # Model checkpoints (too large for git)
 *.pt
+*.ckpt
+models/separation/sepformer_cache/
+models/separation/pyannote_finetune/
 
 # Virtual environment
 .venv/
