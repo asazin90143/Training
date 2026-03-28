@@ -100,7 +100,7 @@ DEFAULT_PROCESSED_DIR = r"D:\separation_processed"
 SEPARATION_MODELS_DIR = PATHS["models_root"] / "separation"
 HF_TOKEN = os.environ.get("HF_TOKEN", None)
 
-DEFAULT_EPOCHS = 20
+DEFAULT_EPOCHS = 9999  # Unlimited: runs until you Ctrl+C
 DEFAULT_BATCH_SIZE = 8
 DEFAULT_LR = 1e-4
 GRL_LAMBDA = 0.1   # Gradient Reversal strength (ramps up during training)
@@ -434,13 +434,32 @@ def train_sepformer_dann(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DE
     print(f"   📐 GRL λ will ramp from 0 → {GRL_LAMBDA} over training")
     print(f"   🎲 Mixup augmentation: ENABLED (α=0.4)")
 
-    MAX_SAMPLES = 10000 # High-capacity research scale (12+ days on CPU)
+    MAX_SAMPLES = 10000 # High-capacity research scale
     training_samples = samples[:MAX_SAMPLES] if samples else []
 
     training_log = []
     
-    import torchaudio
+    import wave
+    import struct
     import torch.nn.functional as F
+
+    def load_wav_native(filepath):
+        """Load WAV using Python's built-in wave module (no torchcodec dependency)."""
+        with wave.open(str(filepath), 'rb') as wf:
+            n_channels = wf.getnchannels()
+            sampwidth = wf.getsampwidth()
+            sr = wf.getframerate()
+            n_frames = wf.getnframes()
+            raw = wf.readframes(n_frames)
+        if sampwidth == 2:
+            samples_np = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+        elif sampwidth == 4:
+            samples_np = np.frombuffer(raw, dtype=np.int32).astype(np.float32) / 2147483648.0
+        else:
+            samples_np = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+        if n_channels > 1:
+            samples_np = samples_np.reshape(-1, n_channels).mean(axis=1)
+        return torch.from_numpy(samples_np).unsqueeze(0), sr  # [1, T]
 
     model_dir = output_dir / "sepformer_dann"
     model_dir.mkdir(parents=True, exist_ok=True)
@@ -495,18 +514,24 @@ def train_sepformer_dann(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DE
             wavs = []
             for s in batch_samples:
                 try:
-                    wav, sr = torchaudio.load(s["path"])
+                    wav, sr = load_wav_native(s["path"])
+                    # Resample to 8kHz if needed (simple decimation for speed)
                     if sr != 8000:
-                        wav = torchaudio.transforms.Resample(sr, 8000)(wav)
+                        ratio = sr // 8000
+                        if ratio > 1:
+                            wav = wav[:, ::ratio]
+                        # Update effective sr
                     wav = wav.mean(dim=0, keepdim=True) # mono
-                    # Pad to 5 seconds
+                    # Pad/trim to 5 seconds at 8kHz
                     target_length = 8000 * 5
                     if wav.shape[1] < target_length:
                         wav = F.pad(wav, (0, target_length - wav.shape[1]))
                     else:
                         wav = wav[:, :target_length]
                     wavs.append(wav)
-                except Exception:
+                except Exception as e:
+                    if batch_count == 0 and i == 0:
+                        print(f"   ⚠️  Audio load error on first file: {e}")
                     continue
             
             if not wavs:
@@ -567,7 +592,8 @@ def train_sepformer_dann(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DE
             print(f"   Epoch {epoch:3d}/{epochs} | "
                   f"Sep Loss (Unsup): {avg_sep_loss:.4f} | "
                   f"Domain Loss: {avg_domain_loss:.4f} | "
-                  f"GRL λ: {current_lambda:.3f} | Time: {epoch_time:.1f}s")
+                  f"GRL λ: {current_lambda:.3f} | Time: {epoch_time:.1f}s | "
+                  f"Batches: {batch_count}")
         
         # ─── Phase 2: Fault Tolerance (Checkpointing) ───
         torch.save({
@@ -576,6 +602,17 @@ def train_sepformer_dann(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DE
             "sep_state": sep_model.mods.state_dict() if hasattr(sep_model, 'mods') else None,
             "training_log": training_log
         }, str(model_dir / f"checkpoint_epoch_{epoch}.pt"))
+
+        # Save training log every epoch (crash protection)
+        with open(log_path, "w") as f:
+            json.dump({
+                "model": "SepFormer + DANN/GRL",
+                "epochs": epochs,
+                "grl_lambda": GRL_LAMBDA,
+                "domain_categories": domain_names,
+                "training_log": training_log,
+                "timestamp": datetime.now().isoformat()
+            }, f, indent=2)
 
     # Save model and training log
     model_dir = output_dir / "sepformer_dann"
