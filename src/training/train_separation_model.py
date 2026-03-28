@@ -542,8 +542,8 @@ def train_sepformer_dann(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DE
             # --- Actual Forward Pass ---
             # 1. Feature Extraction via SepFormer Encoder
             if hasattr(sep_model, 'mods') and 'encoder' in sep_model.mods:
-                encoded = sep_model.mods.encoder(batch_wavs) # [B, T, C]
-                domain_features = encoded.mean(dim=1) # [B, C]
+                encoded = sep_model.mods.encoder(batch_wavs) # [B, C, T]
+                domain_features = encoded.mean(dim=2) # [B, C] — average over time
                 
                 # Domain Adversarial Path
                 reversed_features = grl(domain_features)
