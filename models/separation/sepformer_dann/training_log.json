@@ -2641,7 +2641,14 @@
       "domain_loss": 1.6094,
       "grl_lambda": 0.0038,
       "time_s": 115.23
+    },
+    {
+      "epoch": 377,
+      "sep_loss": 0.0,
+      "domain_loss": 1.6095,
+      "grl_lambda": 0.0038,
+      "time_s": 135.33
     }
   ],
-  "timestamp": "2026-03-29T04:41:50.164958"
+  "timestamp": "2026-03-29T04:44:05.665397"
 }
