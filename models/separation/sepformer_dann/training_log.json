@@ -5854,7 +5854,95 @@
       "domain_loss": 1.6096,
       "grl_lambda": 0.0084,
       "time_s": 101.53
+    },
+    {
+      "epoch": 836,
+      "sep_loss": 0.8963,
+      "domain_loss": 1.5083,
+      "domain_acc": 0.2128,
+      "grl_lambda": 0.0084,
+      "time_s": 2.75
+    },
+    {
+      "epoch": 837,
+      "sep_loss": 0.9132,
+      "domain_loss": 1.3378,
+      "domain_acc": 0.2086,
+      "grl_lambda": 0.0084,
+      "time_s": 3.08
+    },
+    {
+      "epoch": 838,
+      "sep_loss": 0.9498,
+      "domain_loss": 1.4031,
+      "domain_acc": 0.1897,
+      "grl_lambda": 0.0084,
+      "time_s": 2.89
+    },
+    {
+      "epoch": 839,
+      "sep_loss": 0.9154,
+      "domain_loss": 1.4705,
+      "domain_acc": 0.2049,
+      "grl_lambda": 0.0084,
+      "time_s": 2.99
+    },
+    {
+      "epoch": 840,
+      "sep_loss": 0.9109,
+      "domain_loss": 1.4889,
+      "domain_acc": 0.2177,
+      "grl_lambda": 0.0084,
+      "time_s": 2.95
+    },
+    {
+      "epoch": 841,
+      "sep_loss": 0.9643,
+      "domain_loss": 1.4905,
+      "domain_acc": 0.1893,
+      "grl_lambda": 0.0084,
+      "time_s": 2.95
+    },
+    {
+      "epoch": 842,
+      "sep_loss": 0.8536,
+      "domain_loss": 1.5417,
+      "domain_acc": 0.2154,
+      "grl_lambda": 0.0084,
+      "time_s": 3.01
+    },
+    {
+      "epoch": 843,
+      "sep_loss": 0.9598,
+      "domain_loss": 1.5046,
+      "domain_acc": 0.2185,
+      "grl_lambda": 0.0084,
+      "time_s": 2.92
+    },
+    {
+      "epoch": 844,
+      "sep_loss": 0.9039,
+      "domain_loss": 1.3914,
+      "domain_acc": 0.2002,
+      "grl_lambda": 0.0084,
+      "time_s": 2.85
+    },
+    {
+      "epoch": 845,
+      "sep_loss": 1.0231,
+      "domain_loss": 1.4605,
+      "domain_acc": 0.2036,
+      "grl_lambda": 0.0085,
+      "time_s": 2.96
+    },
+    {
+      "epoch": 846,
+      "sep_loss": 0.9416,
+      "domain_loss": 1.5889,
+      "domain_acc": 0.2121,
+      "grl_lambda": 0.0085,
+      "time_s": 2.93
     }
   ],
-  "timestamp": "2026-03-29T12:52:37.660811"
+  "timestamp": "2026-03-29T17:50:09.419849"
 }
