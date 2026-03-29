@@ -6878,7 +6878,191 @@
       "domain_acc": 0.7672,
       "grl_lambda": 0.0096,
       "time_s": 215.43
+    },
+    {
+      "epoch": 964,
+      "sep_loss": 0.0,
+      "domain_loss": 0.6016,
+      "domain_acc": 0.7743,
+      "grl_lambda": 0.0096,
+      "time_s": 182.88
+    },
+    {
+      "epoch": 965,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5875,
+      "domain_acc": 0.7802,
+      "grl_lambda": 0.0097,
+      "time_s": 258.9
+    },
+    {
+      "epoch": 966,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5921,
+      "domain_acc": 0.7761,
+      "grl_lambda": 0.0097,
+      "time_s": 255.4
+    },
+    {
+      "epoch": 967,
+      "sep_loss": 0.0,
+      "domain_loss": 0.6056,
+      "domain_acc": 0.7736,
+      "grl_lambda": 0.0097,
+      "time_s": 264.26
+    },
+    {
+      "epoch": 968,
+      "sep_loss": 0.0,
+      "domain_loss": 0.6095,
+      "domain_acc": 0.7699,
+      "grl_lambda": 0.0097,
+      "time_s": 219.94
+    },
+    {
+      "epoch": 969,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5839,
+      "domain_acc": 0.78,
+      "grl_lambda": 0.0097,
+      "time_s": 197.64
+    },
+    {
+      "epoch": 970,
+      "sep_loss": 0.0,
+      "domain_loss": 0.6071,
+      "domain_acc": 0.7721,
+      "grl_lambda": 0.0097,
+      "time_s": 203.16
+    },
+    {
+      "epoch": 971,
+      "sep_loss": 0.0,
+      "domain_loss": 0.607,
+      "domain_acc": 0.7698,
+      "grl_lambda": 0.0097,
+      "time_s": 194.94
+    },
+    {
+      "epoch": 972,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5987,
+      "domain_acc": 0.7756,
+      "grl_lambda": 0.0097,
+      "time_s": 191.37
+    },
+    {
+      "epoch": 973,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5951,
+      "domain_acc": 0.7756,
+      "grl_lambda": 0.0097,
+      "time_s": 172.49
+    },
+    {
+      "epoch": 974,
+      "sep_loss": 0.0,
+      "domain_loss": 0.6011,
+      "domain_acc": 0.7727,
+      "grl_lambda": 0.0097,
+      "time_s": 162.16
+    },
+    {
+      "epoch": 975,
+      "sep_loss": 0.0,
+      "domain_loss": 0.6068,
+      "domain_acc": 0.7723,
+      "grl_lambda": 0.0098,
+      "time_s": 159.01
+    },
+    {
+      "epoch": 976,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5865,
+      "domain_acc": 0.7755,
+      "grl_lambda": 0.0098,
+      "time_s": 145.55
+    },
+    {
+      "epoch": 977,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5969,
+      "domain_acc": 0.7728,
+      "grl_lambda": 0.0098,
+      "time_s": 143.42
+    },
+    {
+      "epoch": 978,
+      "sep_loss": 0.0,
+      "domain_loss": 0.598,
+      "domain_acc": 0.7761,
+      "grl_lambda": 0.0098,
+      "time_s": 151.39
+    },
+    {
+      "epoch": 979,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5906,
+      "domain_acc": 0.7799,
+      "grl_lambda": 0.0098,
+      "time_s": 164.31
+    },
+    {
+      "epoch": 980,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5768,
+      "domain_acc": 0.7835,
+      "grl_lambda": 0.0098,
+      "time_s": 156.2
+    },
+    {
+      "epoch": 981,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5873,
+      "domain_acc": 0.7834,
+      "grl_lambda": 0.0098,
+      "time_s": 161.12
+    },
+    {
+      "epoch": 982,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5911,
+      "domain_acc": 0.7807,
+      "grl_lambda": 0.0098,
+      "time_s": 167.97
+    },
+    {
+      "epoch": 983,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5884,
+      "domain_acc": 0.782,
+      "grl_lambda": 0.0098,
+      "time_s": 154.72
+    },
+    {
+      "epoch": 984,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5844,
+      "domain_acc": 0.781,
+      "grl_lambda": 0.0098,
+      "time_s": 154.97
+    },
+    {
+      "epoch": 985,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5921,
+      "domain_acc": 0.7778,
+      "grl_lambda": 0.0099,
+      "time_s": 155.1
+    },
+    {
+      "epoch": 986,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5834,
+      "domain_acc": 0.7819,
+      "grl_lambda": 0.0099,
+      "time_s": 160.77
     }
   ],
-  "timestamp": "2026-03-29T23:11:26.373137"
+  "timestamp": "2026-03-30T00:21:07.834672"
 }
