@@ -4538,7 +4538,35 @@
       "domain_loss": 1.6095,
       "grl_lambda": 0.0065,
       "time_s": 88.95
+    },
+    {
+      "epoch": 648,
+      "sep_loss": 0.0,
+      "domain_loss": 1.6095,
+      "grl_lambda": 0.0065,
+      "time_s": 98.61
+    },
+    {
+      "epoch": 649,
+      "sep_loss": 0.0,
+      "domain_loss": 1.6095,
+      "grl_lambda": 0.0065,
+      "time_s": 97.8
+    },
+    {
+      "epoch": 650,
+      "sep_loss": 0.0,
+      "domain_loss": 1.6095,
+      "grl_lambda": 0.0065,
+      "time_s": 107.02
+    },
+    {
+      "epoch": 651,
+      "sep_loss": 0.0,
+      "domain_loss": 1.6095,
+      "grl_lambda": 0.0065,
+      "time_s": 101.19
     }
   ],
-  "timestamp": "2026-03-29T09:16:14.425390"
+  "timestamp": "2026-03-29T09:22:59.844768"
 }
