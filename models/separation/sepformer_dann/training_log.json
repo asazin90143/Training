@@ -10838,7 +10838,31 @@
       "domain_acc": 0.8206,
       "grl_lambda": 0.0146,
       "time_s": 277.6
+    },
+    {
+      "epoch": 1459,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4705,
+      "domain_acc": 0.8243,
+      "grl_lambda": 0.0146,
+      "time_s": 226.55
+    },
+    {
+      "epoch": 1460,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4824,
+      "domain_acc": 0.8228,
+      "grl_lambda": 0.0146,
+      "time_s": 243.26
+    },
+    {
+      "epoch": 1461,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4909,
+      "domain_acc": 0.8185,
+      "grl_lambda": 0.0146,
+      "time_s": 240.38
     }
   ],
-  "timestamp": "2026-03-31T00:02:11.418756"
+  "timestamp": "2026-03-31T00:14:02.258475"
 }
