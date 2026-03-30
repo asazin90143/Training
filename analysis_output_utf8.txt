@@ -1,0 +1,19 @@
+﻿Analyzing: models\separation\sepformer_dann\checkpoint_epoch_1461.pt
+Epoch: 1461
+
+[Domain Classifier Weights]
+ - 0.weight                       | Mean: -0.020741 | Std: 0.211335 | Range: [-3.5737, 4.3986]
+ - 3.weight                       | Mean: 0.002026 | Std: 0.442738 | Range: [-4.6273, 3.9927]
+ - 6.weight                       | Mean: -0.768170 | Std: 1.096520 | Range: [-4.5308, 1.5676]
+
+[SepFormer Encoder Weights (Sampling)]
+ - encoder.conv1d.weight          | Mean: -0.019034 | Std: 0.531514 | Range: [-7.5738, 4.1564]
+ - decoder.weight                 | Mean: 0.002249 | Std: 0.312758 | Range: [-1.2038, 1.1801]
+ - masknet.norm.weight            | Mean: 0.275185 | Std: 0.260418 | Range: [-0.0012, 1.2403]
+ - masknet.conv1d.weight          | Mean: -0.005309 | Std: 0.180498 | Range: [-2.6315, 2.2718]
+ - masknet.dual_mdl.0.intra_mdl.mdl.layers.0.self_att.att.in_proj_weight | Mean: 0.000479 | Std: 0.217694 | Range: [-1.8647, 1.8516]
+ - masknet.dual_mdl.0.intra_mdl.mdl.layers.0.self_att.att.out_proj.weight | Mean: 0.001878 | Std: 0.210031 | Range: [-2.9622, 2.6346]
+ - masknet.dual_mdl.0.intra_mdl.mdl.layers.0.pos_ffn.ffn.0.weight | Mean: -0.007978 | Std: 0.226193 | Range: [-2.7061, 1.9006]
+ - masknet.dual_mdl.0.intra_mdl.mdl.layers.0.pos_ffn.ffn.3.weight | Mean: -0.000397 | Std: 0.221865 | Range: [-2.8814, 3.0524]
+ - masknet.dual_mdl.0.intra_mdl.mdl.layers.0.norm1.norm.weight | Mean: 0.329894 | Std: 0.283813 | Range: [-0.0046, 1.6780]
+ - masknet.dual_mdl.0.intra_mdl.mdl.layers.0.norm2.norm.weight | Mean: 0.700072 | Std: 0.529472 | Range: [0.0011, 2.1116]
