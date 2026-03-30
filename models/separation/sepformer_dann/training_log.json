@@ -9142,7 +9142,31 @@
       "domain_acc": 0.8085,
       "grl_lambda": 0.0125,
       "time_s": 181.89
+    },
+    {
+      "epoch": 1247,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5066,
+      "domain_acc": 0.8138,
+      "grl_lambda": 0.0125,
+      "time_s": 176.18
+    },
+    {
+      "epoch": 1248,
+      "sep_loss": 0.0,
+      "domain_loss": 0.531,
+      "domain_acc": 0.8085,
+      "grl_lambda": 0.0125,
+      "time_s": 190.46
+    },
+    {
+      "epoch": 1249,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5148,
+      "domain_acc": 0.81,
+      "grl_lambda": 0.0125,
+      "time_s": 195.75
     }
   ],
-  "timestamp": "2026-03-30T11:19:16.129219"
+  "timestamp": "2026-03-30T11:28:38.991216"
 }
