@@ -9430,7 +9430,47 @@
       "domain_acc": 0.8107,
       "grl_lambda": 0.0128,
       "time_s": 152.41
+    },
+    {
+      "epoch": 1283,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4865,
+      "domain_acc": 0.8245,
+      "grl_lambda": 0.0128,
+      "time_s": 189.03
+    },
+    {
+      "epoch": 1284,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5225,
+      "domain_acc": 0.8153,
+      "grl_lambda": 0.0128,
+      "time_s": 181.0
+    },
+    {
+      "epoch": 1285,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5155,
+      "domain_acc": 0.8118,
+      "grl_lambda": 0.0129,
+      "time_s": 192.89
+    },
+    {
+      "epoch": 1286,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4944,
+      "domain_acc": 0.8131,
+      "grl_lambda": 0.0129,
+      "time_s": 169.17
+    },
+    {
+      "epoch": 1287,
+      "sep_loss": 0.0,
+      "domain_loss": 0.5041,
+      "domain_acc": 0.8142,
+      "grl_lambda": 0.0129,
+      "time_s": 177.91
     }
   ],
-  "timestamp": "2026-03-30T13:02:43.689926"
+  "timestamp": "2026-03-30T13:17:54.536677"
 }
