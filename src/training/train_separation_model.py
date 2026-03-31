@@ -750,6 +750,18 @@ def train_sepformer_dann(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DE
             "training_log": training_log
         }, str(model_dir / f"checkpoint_epoch_{epoch}.pt"))
 
+        # Cleanup old checkpoints (keep only the last 3)
+        try:
+            import glob
+            import os
+            ckpts = glob.glob(str(model_dir / "checkpoint_epoch_*.pt"))
+            if len(ckpts) > 3:
+                ckpts.sort(key=lambda x: int(os.path.basename(x).replace("checkpoint_epoch_", "").replace(".pt", "")))
+                for old_ckpt in ckpts[:-3]:
+                    os.remove(old_ckpt)
+        except Exception as e:
+            print(f"   ⚠️ Could not prune old checkpoints: {e}")
+
         # Save training log every epoch (crash protection)
         with open(log_path, "w") as f:
             json.dump({
