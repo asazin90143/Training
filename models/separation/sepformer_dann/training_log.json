@@ -14014,7 +14014,55 @@
       "domain_acc": 0.828,
       "grl_lambda": 0.0186,
       "time_s": 384.46
+    },
+    {
+      "epoch": 1856,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4847,
+      "domain_acc": 0.8269,
+      "grl_lambda": 0.0186,
+      "time_s": 341.46
+    },
+    {
+      "epoch": 1857,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4691,
+      "domain_acc": 0.8289,
+      "grl_lambda": 0.0186,
+      "time_s": 380.69
+    },
+    {
+      "epoch": 1858,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4598,
+      "domain_acc": 0.8269,
+      "grl_lambda": 0.0186,
+      "time_s": 341.04
+    },
+    {
+      "epoch": 1859,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4782,
+      "domain_acc": 0.8267,
+      "grl_lambda": 0.0186,
+      "time_s": 385.18
+    },
+    {
+      "epoch": 1860,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4695,
+      "domain_acc": 0.8281,
+      "grl_lambda": 0.0186,
+      "time_s": 327.0
+    },
+    {
+      "epoch": 1861,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4676,
+      "domain_acc": 0.8297,
+      "grl_lambda": 0.0186,
+      "time_s": 328.11
     }
   ],
-  "timestamp": "2026-03-31T19:18:23.695333"
+  "timestamp": "2026-03-31T19:53:28.723888"
 }
