@@ -14470,7 +14470,15 @@
       "domain_acc": 0.8227,
       "grl_lambda": 0.0191,
       "time_s": 139.93
+    },
+    {
+      "epoch": 1913,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4725,
+      "domain_acc": 0.8283,
+      "grl_lambda": 0.0191,
+      "time_s": 1367.36
     }
   ],
-  "timestamp": "2026-03-31T23:14:54.776769"
+  "timestamp": "2026-03-31T23:42:31.131562"
 }
