@@ -543,7 +543,7 @@ def train_sepformer_dann(processed_dir, output_dir, epochs=DEFAULT_EPOCHS, lr=DE
     print(f"   📐 GRL λ will ramp from 0 → {GRL_LAMBDA} over training")
     print(f"   🎲 Mixup augmentation: ENABLED (α=0.4)")
 
-    MAX_SAMPLES = 100000 # Deep Forensic Scale (50,000 batches per epoch)
+    MAX_SAMPLES = 200000 # Extreme Forensic Scale (100,000 batches per epoch)
 
     # Helper to map data source to domain category
     def get_domain_label(sample):
