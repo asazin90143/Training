@@ -14678,7 +14678,23 @@
       "domain_acc": 0.8338,
       "grl_lambda": 0.0194,
       "time_s": 3491.98
+    },
+    {
+      "epoch": 1939,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4594,
+      "domain_acc": 0.8333,
+      "grl_lambda": 0.0194,
+      "time_s": 5100.24
+    },
+    {
+      "epoch": 1940,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4568,
+      "domain_acc": 0.8339,
+      "grl_lambda": 0.0194,
+      "time_s": 4575.29
     }
   ],
-  "timestamp": "2026-04-01T21:20:11.581885"
+  "timestamp": "2026-04-02T00:01:27.634013"
 }
