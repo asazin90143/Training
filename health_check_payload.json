@@ -1,0 +1,42 @@
+{
+  "domain": {
+    "0.weight": {
+      "mean": -0.0285,
+      "std": 0.4693,
+      "min": -11.8853,
+      "max": 9.1978
+    },
+    "3.weight": {
+      "mean": 0.0861,
+      "std": 1.361,
+      "min": -14.1485,
+      "max": 14.1934
+    },
+    "6.weight": {
+      "mean": -1.859,
+      "std": 1.6722,
+      "min": -12.8588,
+      "max": 0.5302
+    }
+  },
+  "sepformer": {
+    "encoder.conv1d.weight": {
+      "mean": -0.019,
+      "std": 0.5315,
+      "min": -7.5738,
+      "max": 4.1564
+    },
+    "decoder.weight": {
+      "mean": 0.0022,
+      "std": 0.3128,
+      "min": -1.2038,
+      "max": 1.1801
+    },
+    "masknet.norm.weight": {
+      "mean": 0.2752,
+      "std": 0.2604,
+      "min": -0.0012,
+      "max": 1.2403
+    }
+  }
+}
