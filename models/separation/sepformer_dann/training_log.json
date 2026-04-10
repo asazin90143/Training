@@ -16606,7 +16606,47 @@
       "domain_acc": 0.8481,
       "grl_lambda": 0.0218,
       "time_s": 2885.44
+    },
+    {
+      "epoch": 2180,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4212,
+      "domain_acc": 0.8497,
+      "grl_lambda": 0.0218,
+      "time_s": 3005.69
+    },
+    {
+      "epoch": 2181,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4216,
+      "domain_acc": 0.8497,
+      "grl_lambda": 0.0218,
+      "time_s": 2860.82
+    },
+    {
+      "epoch": 2182,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4252,
+      "domain_acc": 0.85,
+      "grl_lambda": 0.0218,
+      "time_s": 2948.16
+    },
+    {
+      "epoch": 2183,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4229,
+      "domain_acc": 0.85,
+      "grl_lambda": 0.0218,
+      "time_s": 3074.03
+    },
+    {
+      "epoch": 2184,
+      "sep_loss": 0.0,
+      "domain_loss": 0.424,
+      "domain_acc": 0.85,
+      "grl_lambda": 0.0218,
+      "time_s": 3223.37
     }
   ],
-  "timestamp": "2026-04-10T09:59:05.114547"
+  "timestamp": "2026-04-10T14:10:58.072741"
 }
