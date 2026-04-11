@@ -16926,7 +16926,15 @@
       "domain_acc": 0.85,
       "grl_lambda": 0.0222,
       "time_s": 2865.2
+    },
+    {
+      "epoch": 2220,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4213,
+      "domain_acc": 0.8505,
+      "grl_lambda": 0.0222,
+      "time_s": 2648.47
     }
   ],
-  "timestamp": "2026-04-11T19:18:02.145457"
+  "timestamp": "2026-04-11T20:02:10.787190"
 }
