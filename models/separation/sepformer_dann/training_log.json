@@ -16814,7 +16814,103 @@
       "domain_acc": 0.8492,
       "grl_lambda": 0.0221,
       "time_s": 2839.93
+    },
+    {
+      "epoch": 2206,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4236,
+      "domain_acc": 0.8497,
+      "grl_lambda": 0.0221,
+      "time_s": 2932.08
+    },
+    {
+      "epoch": 2207,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4287,
+      "domain_acc": 0.8493,
+      "grl_lambda": 0.0221,
+      "time_s": 2780.43
+    },
+    {
+      "epoch": 2208,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4245,
+      "domain_acc": 0.8492,
+      "grl_lambda": 0.0221,
+      "time_s": 2886.32
+    },
+    {
+      "epoch": 2209,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4269,
+      "domain_acc": 0.8499,
+      "grl_lambda": 0.0221,
+      "time_s": 2795.06
+    },
+    {
+      "epoch": 2210,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4222,
+      "domain_acc": 0.8505,
+      "grl_lambda": 0.0221,
+      "time_s": 3062.45
+    },
+    {
+      "epoch": 2211,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4253,
+      "domain_acc": 0.8501,
+      "grl_lambda": 0.0221,
+      "time_s": 3196.88
+    },
+    {
+      "epoch": 2212,
+      "sep_loss": 0.0,
+      "domain_loss": 0.424,
+      "domain_acc": 0.85,
+      "grl_lambda": 0.0221,
+      "time_s": 2821.52
+    },
+    {
+      "epoch": 2213,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4242,
+      "domain_acc": 0.8506,
+      "grl_lambda": 0.0221,
+      "time_s": 3002.08
+    },
+    {
+      "epoch": 2214,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4229,
+      "domain_acc": 0.8501,
+      "grl_lambda": 0.0221,
+      "time_s": 3015.98
+    },
+    {
+      "epoch": 2215,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4284,
+      "domain_acc": 0.8492,
+      "grl_lambda": 0.0222,
+      "time_s": 3121.29
+    },
+    {
+      "epoch": 2216,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4264,
+      "domain_acc": 0.8499,
+      "grl_lambda": 0.0222,
+      "time_s": 2911.71
+    },
+    {
+      "epoch": 2217,
+      "sep_loss": 0.0,
+      "domain_loss": 0.4261,
+      "domain_acc": 0.8482,
+      "grl_lambda": 0.0222,
+      "time_s": 3079.33
     }
   ],
-  "timestamp": "2026-04-11T07:45:03.075601"
+  "timestamp": "2026-04-11T17:38:30.318479"
 }
