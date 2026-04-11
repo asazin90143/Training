@@ -935,7 +935,7 @@ def train_student_separator(output_dir, epochs=DEFAULT_EPOCHS):
             
             with torch.no_grad():
                 encoded = teacher.mods.encoder(batch_wavs)
-                teacher_outputs = teacher.mods.separator(encoded)
+                teacher_outputs = teacher.mods.masknet(encoded)
             
             optimizer.zero_grad()
             preds = student(encoded)
