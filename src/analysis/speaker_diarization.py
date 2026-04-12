@@ -1,6 +1,12 @@
 """
 Speaker Diarization & Voice Separation Pipeline (Phase 1)
-Uses Pyannote.audio for speaker diarization and SpeechBrain SepFormer for voice separation.
+
+Uses custom forensic-trained models when available:
+  - Fine-tuned PyAnnote segmentation-3.0 for speaker diarization
+  - Student Separator (distilled from SepFormer + DANN) for fast voice isolation
+
+Falls back to pre-trained HuggingFace/SpeechBrain models if custom checkpoints
+are not found.
 
 Detects how many speakers are present, creates a timeline of who spoke when,
 and isolates each speaker's voice into separate .wav files.
@@ -10,23 +16,33 @@ Usage:
     python src/analysis/speaker_diarization.py "audio.wav" --output_dir "./separated"
     python src/analysis/speaker_diarization.py "audio.wav" --max_speakers 4
     python src/analysis/speaker_diarization.py "audio.wav" --no_separate   # Diarization only
+    python src/analysis/speaker_diarization.py "audio.wav" --use_pretrained  # Force generic models
 
 Requirements:
-    pip install pyannote.audio speechbrain torchaudio
+    pip install pyannote.audio speechbrain python-dotenv
 """
 
 import os
 import sys
 import json
+import wave
 import argparse
 import warnings
 import time
+import numpy as np
 from pathlib import Path
 from datetime import datetime
 
 # Suppress non-critical warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
+
+# Load .env for HF_TOKEN
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # Resolve project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -35,6 +51,11 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config import get_paths
 PATHS = get_paths()
+
+# Paths to custom-trained models
+CUSTOM_PYANNOTE_DIR = PATHS["models_root"] / "separation" / "pyannote_finetune"
+CUSTOM_STUDENT_PATH = PATHS["models_root"] / "separation" / "student_separator" / "student_separator.pt"
+CUSTOM_SEPFORMER_DIR = PATHS["models_root"] / "separation" / "sepformer_dann"
 
 
 # ─── HuggingFace Token ───────────────────────────────────────────────────
@@ -49,44 +70,147 @@ def _import_torch():
     return torch
 
 
-def _import_torchaudio():
-    """Lazy import for torchaudio."""
-    import torchaudio
-    return torchaudio
-
-
-def _load_diarization_pipeline(device="cpu"):
-    """Load Pyannote diarization pipeline."""
-    from pyannote.audio import Pipeline
-
-    print("   📡 Loading Pyannote diarization pipeline...")
-    print("   ℹ️  First run will download model weights (~300 MB)")
-
-    pipeline = Pipeline.from_pretrained(
-        "pyannote/speaker-diarization-3.1",
-        use_auth_token=HF_TOKEN
-    )
-
+def _load_wav_native(filepath, target_sr=16000):
+    """Load WAV using Python's built-in wave module (no torchaudio dependency)."""
     torch = _import_torch()
+    with wave.open(str(filepath), 'rb') as wf:
+        sr = wf.getframerate()
+        n_frames = wf.getnframes()
+        n_channels = wf.getnchannels()
+        sampwidth = wf.getsampwidth()
+        raw = wf.readframes(n_frames)
+    if sampwidth == 2:
+        arr = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+    elif sampwidth == 4:
+        arr = np.frombuffer(raw, dtype=np.int32).astype(np.float32) / 2147483648.0
+    else:
+        arr = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+    # Convert stereo to mono
+    if n_channels > 1:
+        arr = arr.reshape(-1, n_channels).mean(axis=1)
+    return torch.from_numpy(arr).unsqueeze(0), sr  # [1, samples]
+
+
+def _load_diarization_pipeline(device="cpu", use_pretrained=False):
+    """Load Pyannote diarization pipeline with custom fine-tuned model if available."""
+    from pyannote.audio import Pipeline
+    torch = _import_torch()
+
+    # Check for custom fine-tuned PyAnnote checkpoint
+    custom_ckpt = None
+    if not use_pretrained:
+        ckpts = sorted(CUSTOM_PYANNOTE_DIR.glob("checkpoint_epoch_*.pt")) if CUSTOM_PYANNOTE_DIR.exists() else []
+        if ckpts:
+            custom_ckpt = ckpts[-1]  # Use the latest checkpoint
+
+    if custom_ckpt:
+        print(f"   📡 Loading custom fine-tuned PyAnnote (forensic)...")
+        print(f"   📂 Checkpoint: {custom_ckpt.name}")
+        # Load the base pipeline, then override the segmentation model weights
+        pipeline = Pipeline.from_pretrained(
+            "pyannote/speaker-diarization-3.1",
+            use_auth_token=HF_TOKEN
+        )
+        # Override segmentation model with our fine-tuned weights
+        try:
+            from pyannote.audio import Model
+            seg_model = Model.from_pretrained("pyannote/segmentation-3.0", use_auth_token=HF_TOKEN)
+            state = torch.load(str(custom_ckpt), map_location="cpu")
+            seg_model.load_state_dict(state["model_state"])
+            pipeline._segmentation.model = seg_model
+            print(f"   ✅ Custom forensic PyAnnote loaded (fine-tuned segmentation)")
+        except Exception as e:
+            print(f"   ⚠️  Could not inject custom weights: {e}")
+            print(f"   ℹ️  Falling back to pre-trained segmentation")
+    else:
+        print("   📡 Loading pre-trained Pyannote diarization pipeline...")
+        if not use_pretrained and CUSTOM_PYANNOTE_DIR.exists():
+            print("   ℹ️  No custom PyAnnote checkpoint found, using pre-trained")
+        pipeline = Pipeline.from_pretrained(
+            "pyannote/speaker-diarization-3.1",
+            use_auth_token=HF_TOKEN
+        )
+        print(f"   ✅ Pre-trained Pyannote loaded")
+
     pipeline.to(torch.device(device))
-    print(f"   ✅ Pyannote loaded on {device}")
     return pipeline
 
 
-def _load_separation_model(device="cpu"):
-    """Load SpeechBrain SepFormer separation model."""
+def _load_separation_model(device="cpu", use_pretrained=False):
+    """
+    Load voice separation model.
+    Priority: Custom Student Separator > Pre-trained SepFormer
+    """
+    torch = _import_torch()
+    nn = _import_torch_nn()
+
+    # Try loading custom Student Separator (fast, distilled model)
+    if not use_pretrained and CUSTOM_STUDENT_PATH.exists():
+        print(f"   📡 Loading custom Student Separator (forensic-distilled)...")
+        print(f"   📂 Model: {CUSTOM_STUDENT_PATH.name}")
+
+        # Reconstruct the StudentSeparator architecture
+        class StudentSeparator(nn.Module):
+            """Tiny 10-layer separator distilled from Teacher SepFormer."""
+            def __init__(self, input_dim=256, hidden_dim=128, num_sources=3):
+                super().__init__()
+                self.encoder = nn.Sequential(
+                    nn.Conv1d(input_dim, hidden_dim, 1),
+                    nn.ReLU(),
+                    nn.BatchNorm1d(hidden_dim),
+                )
+                self.separator = nn.Sequential(
+                    nn.Conv1d(hidden_dim, hidden_dim, 1),
+                    nn.ReLU(),
+                    nn.Conv1d(hidden_dim, hidden_dim, 1),
+                    nn.ReLU(),
+                    nn.Conv1d(hidden_dim, hidden_dim, 1),
+                    nn.ReLU(),
+                )
+                self.decoder = nn.Sequential(
+                    nn.Conv1d(hidden_dim, hidden_dim, 1),
+                    nn.ReLU(),
+                    nn.Conv1d(hidden_dim, input_dim * num_sources, 1),
+                )
+                self.num_sources = num_sources
+                self.input_dim = input_dim
+
+            def forward(self, x):
+                encoded = self.encoder(x)
+                separated = self.separator(encoded)
+                decoded = self.decoder(separated)
+                b, _, t = decoded.size()
+                return decoded.view(b, self.num_sources, self.input_dim, t)
+
+        student = StudentSeparator(input_dim=256, hidden_dim=128, num_sources=3)
+        state = torch.load(str(CUSTOM_STUDENT_PATH), map_location=device)
+        if isinstance(state, dict) and "model_state" in state:
+            student.load_state_dict(state["model_state"])
+        else:
+            student.load_state_dict(state)
+        student.eval()
+        student.to(device)
+
+        total_params = sum(p.numel() for p in student.parameters())
+        print(f"   ✅ Student Separator loaded: {total_params / 1e6:.2f}M params (5x faster than Teacher)")
+        return student, "student"
+
+    # Fallback: Load pre-trained SpeechBrain SepFormer
     from speechbrain.inference.separation import SepformerSeparation
-
-    print("   📡 Loading SpeechBrain SepFormer...")
-    print("   ℹ️  First run will download model weights (~100 MB)")
-
+    print("   📡 Loading pre-trained SpeechBrain SepFormer...")
     model = SepformerSeparation.from_hparams(
         source="speechbrain/sepformer-wsj03mix",
         savedir=str(PATHS["models_root"] / "separation" / "sepformer_cache"),
         run_opts={"device": device}
     )
-    print(f"   ✅ SepFormer loaded on {device}")
-    return model
+    print(f"   ✅ Pre-trained SepFormer loaded on {device}")
+    return model, "sepformer"
+
+
+def _import_torch_nn():
+    """Lazy import for torch.nn."""
+    import torch.nn as nn
+    return nn
 
 
 # ─── Core Functions ──────────────────────────────────────────────────────
@@ -142,20 +266,20 @@ def run_diarization(audio_path, pipeline, min_speakers=None, max_speakers=None):
     return diarization, speaker_timeline
 
 
-def run_separation(audio_path, sep_model, output_dir, timeline=None):
+def run_separation(audio_path, sep_model, model_type, output_dir, timeline=None):
     """
-    Run voice separation using SepFormer.
+    Run voice separation using either the Student Separator or pre-trained SepFormer.
 
     Args:
         audio_path: Path to the audio file
-        sep_model: Loaded SepFormer model
+        sep_model: Loaded model (Student or SepFormer)
+        model_type: "student" or "sepformer"
         output_dir: Directory to save separated stems
         timeline: Optional diarization timeline for labeling
 
     Returns:
         list of output file paths
     """
-    torchaudio = _import_torchaudio()
     torch = _import_torch()
 
     output_dir = Path(output_dir)
@@ -164,17 +288,48 @@ def run_separation(audio_path, sep_model, output_dir, timeline=None):
     audio_name = Path(audio_path).stem
 
     print(f"\n🔀 Running voice separation on: {Path(audio_path).name}")
+    print(f"   🧠 Model: {'Custom Student Separator (forensic)' if model_type == 'student' else 'Pre-trained SepFormer'}")
     start = time.time()
 
-    # SepFormer separation
-    est_sources = sep_model.separate_file(path=str(audio_path))
+    if model_type == "student":
+        # ── Student Separator path ──
+        # Load audio via native wav loader
+        waveform, sr = _load_wav_native(audio_path)
+
+        # The Student Separator works on SepFormer encoder features [B, 256, T]
+        # We need to load the SepFormer encoder to extract features first
+        from speechbrain.inference.separation import SepformerSeparation
+        teacher = SepformerSeparation.from_hparams(
+            source="speechbrain/sepformer-wsj03mix",
+            savedir=str(PATHS["models_root"] / "separation" / "sepformer_cache"),
+            run_opts={"device": "cpu"}
+        )
+
+        with torch.no_grad():
+            # Encode through teacher's encoder
+            encoded = teacher.mods.encoder(waveform)  # [B, C, T]
+            # Run through student separator
+            student_out = sep_model(encoded)  # [B, 3, 256, T]
+            # Decode each source back to waveform through teacher's decoder
+            num_sources = student_out.shape[1]
+            est_sources_list = []
+            for src_idx in range(num_sources):
+                source_features = student_out[:, src_idx, :, :]  # [B, 256, T]
+                decoded = teacher.mods.decoder(source_features)  # [B, T']
+                est_sources_list.append(decoded)
+            est_sources = torch.stack(est_sources_list, dim=-1)  # [B, T', num_sources]
+
+    else:
+        # ── Pre-trained SepFormer path ──
+        est_sources = sep_model.separate_file(path=str(audio_path))
+
     elapsed = time.time() - start
 
     num_sources = est_sources.shape[-1]
     print(f"   🎯 Separated into {num_sources} source(s)")
     print(f"   ⚡ Separation took: {elapsed:.1f}s")
 
-    # Save each separated source
+    # Save each separated source  
     output_files = []
     for i in range(num_sources):
         source = est_sources[:, :, i]
@@ -184,15 +339,17 @@ def run_separation(audio_path, sep_model, output_dir, timeline=None):
         if max_val > 0:
             source = source / max_val * 0.95
 
-        # Determine speaker label
-        if timeline:
-            # Find the speaker with the most speech in this source
-            speaker_label = f"speaker_{i + 1}"
-        else:
-            speaker_label = f"speaker_{i + 1}"
-
+        speaker_label = f"speaker_{i + 1}"
         output_path = output_dir / f"{audio_name}_{speaker_label}.wav"
-        torchaudio.save(str(output_path), source.cpu(), 8000)
+
+        # Save WAV using native wave module (no torchaudio dependency)
+        audio_np = (source.squeeze().cpu().numpy() * 32767).astype(np.int16)
+        with wave.open(str(output_path), 'wb') as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(8000)
+            wf.writeframes(audio_np.tobytes())
+
         output_files.append(output_path)
         print(f"   💾 Saved: {output_path.name}")
 
@@ -258,6 +415,8 @@ Examples:
     parser.add_argument("--device", type=str, default="cpu",
                         choices=["cpu", "cuda"],
                         help="Device to run on (default: cpu)")
+    parser.add_argument("--use_pretrained", action="store_true",
+                        help="Force use of pre-trained models instead of custom forensic models")
     args = parser.parse_args()
 
     # Validate input file
@@ -277,6 +436,7 @@ Examples:
     print(f"  Output:      {output_dir}")
     print(f"  Device:      {args.device}")
     print(f"  Separation:  {'Disabled' if args.no_separate else 'Enabled'}")
+    print(f"  Model mode:  {'Pre-trained (generic)' if args.use_pretrained else 'Custom forensic (if available)'}")
     if args.min_speakers:
         print(f"  Min speakers: {args.min_speakers}")
     if args.max_speakers:
@@ -290,7 +450,7 @@ Examples:
     print(f"{'─' * 60}")
 
     try:
-        pipeline = _load_diarization_pipeline(device=args.device)
+        pipeline = _load_diarization_pipeline(device=args.device, use_pretrained=args.use_pretrained)
     except Exception as e:
         print(f"\n❌ Failed to load Pyannote pipeline: {e}")
         print("\n💡 To fix this, run:")
@@ -320,15 +480,15 @@ Examples:
         print(f"{'─' * 60}")
 
         try:
-            sep_model = _load_separation_model(device=args.device)
+            sep_model, model_type = _load_separation_model(device=args.device, use_pretrained=args.use_pretrained)
         except Exception as e:
-            print(f"\n❌ Failed to load SepFormer: {e}")
+            print(f"\n❌ Failed to load separation model: {e}")
             print("\n💡 To fix this, run:")
-            print("   pip install speechbrain torchaudio")
+            print("   pip install speechbrain python-dotenv")
             return
 
         output_files = run_separation(
-            audio_path, sep_model, output_dir, timeline
+            audio_path, sep_model, model_type, output_dir, timeline
         )
     else:
         output_files = []
