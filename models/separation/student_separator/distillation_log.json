@@ -2,7 +2,7 @@
   "model": "Student Separator (Knowledge Distillation)",
   "teacher": "SepFormer + DANN/GRL",
   "total_params": 198272,
-  "epochs_completed": 3933,
+  "epochs_completed": 3934,
   "training_log": [
     {
       "epoch": 1,
@@ -19668,7 +19668,12 @@
       "epoch": 3933,
       "distill_loss": 0.7585,
       "time_s": 27.45
+    },
+    {
+      "epoch": 3934,
+      "distill_loss": 0.7585,
+      "time_s": 56.51
     }
   ],
-  "timestamp": "2026-04-13T04:11:35.288553"
+  "timestamp": "2026-04-13T04:12:31.869466"
 }
