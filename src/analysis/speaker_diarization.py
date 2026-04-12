@@ -68,7 +68,13 @@ try:
     def _patched_hf_download(*args, **kwargs):
         if 'use_auth_token' in kwargs:
             kwargs['token'] = kwargs.pop('use_auth_token')
-        return _orig_hf_download(*args, **kwargs)
+        try:
+            return _orig_hf_download(*args, **kwargs)
+        except Exception as e:
+            if "404" in str(e) or "Not Found" in str(e):
+                # SpeechBrain expects a ValueError on missing custom.py
+                raise ValueError("404 Client Error: File not found on HF hub") from e
+            raise
     huggingface_hub.hf_hub_download = _patched_hf_download
 except ImportError:
     pass
