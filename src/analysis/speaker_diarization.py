@@ -61,6 +61,18 @@ try:
 except ImportError:
     pass
 
+# Patch huggingface_hub compatibility bug (use_auth_token removed in new versions)
+try:
+    import huggingface_hub
+    _orig_hf_download = huggingface_hub.hf_hub_download
+    def _patched_hf_download(*args, **kwargs):
+        if 'use_auth_token' in kwargs:
+            kwargs['token'] = kwargs.pop('use_auth_token')
+        return _orig_hf_download(*args, **kwargs)
+    huggingface_hub.hf_hub_download = _patched_hf_download
+except ImportError:
+    pass
+
 # Resolve project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
