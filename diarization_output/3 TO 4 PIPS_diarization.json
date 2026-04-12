@@ -1,0 +1,20 @@
+{
+  "audio_file": "3 TO 4 PIPS",
+  "timestamp": "2026-04-13T07:35:59.960958",
+  "num_speakers": 2,
+  "total_speech_duration": 24.941000000000003,
+  "timeline": [
+    {
+      "speaker": "SPEAKER_00",
+      "start": 0.031,
+      "end": 9.97,
+      "duration": 9.939
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start": 9.97,
+      "end": 24.972,
+      "duration": 15.002
+    }
+  ]
+}
