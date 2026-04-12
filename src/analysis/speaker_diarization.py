@@ -44,6 +44,14 @@ try:
 except ImportError:
     pass
 
+# Patch torchaudio compatibility bug (list_audio_backends removed in new versions)
+try:
+    import torchaudio
+    if not hasattr(torchaudio, 'list_audio_backends'):
+        torchaudio.list_audio_backends = lambda: ['soundfile']
+except ImportError:
+    pass
+
 # Resolve project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
