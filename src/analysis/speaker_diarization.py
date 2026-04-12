@@ -269,8 +269,15 @@ def run_diarization(audio_path, pipeline, min_speakers=None, max_speakers=None):
     audio_memory_file = {"waveform": waveform, "sample_rate": sr}
 
     start = time.time()
-    diarization = pipeline(audio_memory_file, **kwargs)
+    diarization_output = pipeline(audio_memory_file, **kwargs)
     elapsed = time.time() - start
+
+    # PyAnnote 3.2+ breaking change: returns a DiarizeOutput dataclass instead of an Annotation.
+    # Unwrap it if necessary.
+    if hasattr(diarization_output, "speaker_diarization"):
+        diarization = diarization_output.speaker_diarization
+    else:
+        diarization = diarization_output
 
     # Extract timeline
     speaker_timeline = []
