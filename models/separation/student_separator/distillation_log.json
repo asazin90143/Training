@@ -2,7 +2,7 @@
   "model": "Student Separator (Knowledge Distillation)",
   "teacher": "SepFormer + DANN/GRL",
   "total_params": 198272,
-  "epochs_completed": 4018,
+  "epochs_completed": 4022,
   "training_log": [
     {
       "epoch": 1,
@@ -20093,7 +20093,27 @@
       "epoch": 4018,
       "distill_loss": 0.7583,
       "time_s": 24.21
+    },
+    {
+      "epoch": 4019,
+      "distill_loss": 0.7581,
+      "time_s": 26.71
+    },
+    {
+      "epoch": 4020,
+      "distill_loss": 0.7585,
+      "time_s": 32.48
+    },
+    {
+      "epoch": 4021,
+      "distill_loss": 0.7582,
+      "time_s": 31.78
+    },
+    {
+      "epoch": 4022,
+      "distill_loss": 0.7582,
+      "time_s": 30.27
     }
   ],
-  "timestamp": "2026-04-13T04:53:53.036127"
+  "timestamp": "2026-04-13T04:55:54.579158"
 }
