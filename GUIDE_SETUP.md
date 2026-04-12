@@ -179,9 +179,9 @@ python src/utils/export_to_tflite.py --all --quantize # Export ALL models at onc
 ```
 
 ### Speaker Diarization & Voice Separation
-Detects how many speakers are in an audio file, generates a millisecond-accurate timeline, and isolates each speaker's voice into separate `.wav` files.
+Detects how many speakers are in an audio file, generates a millisecond-accurate timeline, and isolates each speaker's voice into separate `.wav` files using the custom **forensic-distilled Student Separator** and fine-tuned PyAnnote models. This pipeline uses robust `soundfile` loaders to natively support MP3s, completely bypassing common Windows torchaudio crashes.
 
-Requires: `pip install pyannote.audio speechbrain torchaudio`
+Requires: `pip install pyannote.audio speechbrain soundfile python-dotenv`
 
 ```bash
 # Full pipeline: detect speakers + isolate voices
