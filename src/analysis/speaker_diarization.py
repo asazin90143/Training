@@ -209,7 +209,9 @@ def _load_separation_model(device="cpu", use_pretrained=False):
 
         student = StudentSeparator(input_dim=256, hidden_dim=128, num_sources=3)
         state = torch.load(str(CUSTOM_STUDENT_PATH), map_location=device)
-        if isinstance(state, dict) and "model_state" in state:
+        if isinstance(state, dict) and "student_state" in state:
+            student.load_state_dict(state["student_state"])
+        elif isinstance(state, dict) and "model_state" in state:
             student.load_state_dict(state["model_state"])
         else:
             student.load_state_dict(state)
