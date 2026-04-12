@@ -25,11 +25,11 @@ Requirements:
 import os
 import sys
 import json
-import wave
 import argparse
 import warnings
 import time
 import numpy as np
+import soundfile as sf
 from pathlib import Path
 from datetime import datetime
 
@@ -46,6 +46,15 @@ except ImportError:
 
 # Patch torchaudio compatibility bug (list_audio_backends removed in new versions)
 try:
+    import torchaudio
+    if not hasattr(torchaudio, 'list_audio_backends'):
+        torchaudio.list_audio_backends = lambda: ['soundfile']
+except ImportError:
+    pass
+
+# Patch torchaudio compatibility bug (list_audio_backends removed in new versions)
+try:
+    import getattr  # Dummy to prevent formatting error
     import torchaudio
     if not hasattr(torchaudio, 'list_audio_backends'):
         torchaudio.list_audio_backends = lambda: ['soundfile']
@@ -78,25 +87,33 @@ def _import_torch():
     return torch
 
 
-def _load_wav_native(filepath, target_sr=16000):
-    """Load WAV using Python's built-in wave module (no torchaudio dependency)."""
+def _load_audio_robust(filepath):
+    """
+    Load any audio file (WAV, MP3, etc.) natively using soundfile.
+    Bypasses Torchaudio/Torchcodec completely to prevent Windows dependency crashes.
+    """
     torch = _import_torch()
-    with wave.open(str(filepath), 'rb') as wf:
-        sr = wf.getframerate()
-        n_frames = wf.getnframes()
-        n_channels = wf.getnchannels()
-        sampwidth = wf.getsampwidth()
-        raw = wf.readframes(n_frames)
-    if sampwidth == 2:
-        arr = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
-    elif sampwidth == 4:
-        arr = np.frombuffer(raw, dtype=np.int32).astype(np.float32) / 2147483648.0
-    else:
-        arr = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
-    # Convert stereo to mono
-    if n_channels > 1:
-        arr = arr.reshape(-1, n_channels).mean(axis=1)
-    return torch.from_numpy(arr).unsqueeze(0), sr  # [1, samples]
+    try:
+        data, sr = sf.read(str(filepath))
+        
+        # Ensure it's a 2D array: [frames, channels]
+        if len(data.shape) == 1:
+            data = data.reshape(-1, 1)
+
+        # Convert stereo/multi-channel to mono by averaging channels
+        if data.shape[1] > 1:
+            data = data.mean(axis=1, keepdims=True)
+
+        # Convert to numpy float32
+        data = data.astype(np.float32)
+
+        # PyAnnote/SepFormer expect shape: [channels, frames] -> [1, time]
+        waveform = torch.from_numpy(data.T)
+        
+        return waveform, sr
+    except Exception as e:
+        print(f"❌ Audio Load Error: Could not read {filepath}. {e}")
+        return None, None
 
 
 def _load_diarization_pipeline(device="cpu", use_pretrained=False):
@@ -240,8 +257,19 @@ def run_diarization(audio_path, pipeline, min_speakers=None, max_speakers=None):
     if max_speakers is not None:
         kwargs["max_speakers"] = max_speakers
 
+    # Load the audio robustly into memory
+    print("   🎙️  Decoding audio into memory...")
+    waveform, sr = _load_audio_robust(audio_path)
+    if waveform is None:
+        return None, []
+
+    # Format it as a dictionary holding the raw PyTorch tensor.
+    # This completely bypasses PyAnnote's internal `torchaudio.load` dependency,
+    # preventing the torchcodec crash.
+    audio_memory_file = {"waveform": waveform, "sample_rate": sr}
+
     start = time.time()
-    diarization = pipeline(str(audio_path), **kwargs)
+    diarization = pipeline(audio_memory_file, **kwargs)
     elapsed = time.time() - start
 
     # Extract timeline
@@ -300,9 +328,15 @@ def run_separation(audio_path, sep_model, model_type, output_dir, timeline=None)
     start = time.time()
 
     if model_type == "student":
-        # ── Student Separator path ──
-        # Load audio via native wav loader
-        waveform, sr = _load_wav_native(audio_path)
+        # Load audio via robust soundfile loader
+        waveform, sr = _load_audio_robust(audio_path)
+        
+        # Determine target sample rate for SepFormer (usually 8000 Hz)
+        TARGET_SR = 8000
+        if sr != TARGET_SR:
+            # We must resample the waveform for SepFormer
+            import torchaudio.functional as F
+            waveform = F.resample(waveform, sr, TARGET_SR)
 
         # The Student Separator works on SepFormer encoder features [B, 256, T]
         # We need to load the SepFormer encoder to extract features first
@@ -329,7 +363,14 @@ def run_separation(audio_path, sep_model, model_type, output_dir, timeline=None)
 
     else:
         # ── Pre-trained SepFormer path ──
-        est_sources = sep_model.separate_file(path=str(audio_path))
+        # Determine target sample rate for SepFormer (usually 8000 Hz)
+        TARGET_SR = 8000
+        if sr != TARGET_SR:
+            import torchaudio.functional as F
+            waveform = F.resample(waveform, sr, TARGET_SR)
+            
+        # Bypass separate_file completely to prevent torchaudio crash
+        est_sources = sep_model.separate_batch(waveform)
 
     elapsed = time.time() - start
 
@@ -350,13 +391,9 @@ def run_separation(audio_path, sep_model, model_type, output_dir, timeline=None)
         speaker_label = f"speaker_{i + 1}"
         output_path = output_dir / f"{audio_name}_{speaker_label}.wav"
 
-        # Save WAV using native wave module (no torchaudio dependency)
-        audio_np = (source.squeeze().cpu().numpy() * 32767).astype(np.int16)
-        with wave.open(str(output_path), 'wb') as wf:
-            wf.setnchannels(1)
-            wf.setsampwidth(2)
-            wf.setframerate(8000)
-            wf.writeframes(audio_np.tobytes())
+        # Save WAV using robust soundfile module
+        audio_np = source.squeeze().cpu().numpy()
+        sf.write(str(output_path), audio_np, 8000, subtype='PCM_16')
 
         output_files.append(output_path)
         print(f"   💾 Saved: {output_path.name}")
