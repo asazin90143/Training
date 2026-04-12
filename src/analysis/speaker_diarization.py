@@ -109,12 +109,12 @@ def _load_diarization_pipeline(device="cpu", use_pretrained=False):
         # Load the base pipeline, then override the segmentation model weights
         pipeline = Pipeline.from_pretrained(
             "pyannote/speaker-diarization-3.1",
-            use_auth_token=HF_TOKEN
+            token=HF_TOKEN
         )
         # Override segmentation model with our fine-tuned weights
         try:
             from pyannote.audio import Model
-            seg_model = Model.from_pretrained("pyannote/segmentation-3.0", use_auth_token=HF_TOKEN)
+            seg_model = Model.from_pretrained("pyannote/segmentation-3.0", token=HF_TOKEN)
             state = torch.load(str(custom_ckpt), map_location="cpu")
             seg_model.load_state_dict(state["model_state"])
             pipeline._segmentation.model = seg_model
@@ -128,7 +128,7 @@ def _load_diarization_pipeline(device="cpu", use_pretrained=False):
             print("   ℹ️  No custom PyAnnote checkpoint found, using pre-trained")
         pipeline = Pipeline.from_pretrained(
             "pyannote/speaker-diarization-3.1",
-            use_auth_token=HF_TOKEN
+            token=HF_TOKEN
         )
         print(f"   ✅ Pre-trained Pyannote loaded")
 
